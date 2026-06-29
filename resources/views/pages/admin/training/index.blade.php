@@ -87,7 +87,7 @@
                                     </td>
                                     <td class="px-3 py-3 text-[#080808]">{{ $training->participants_count }}</td>
                                     <td class="px-3 py-3">
-                                        <x-ui-badge :variant="$statusBadge">{{ $statusLabel }}</x-ui-badge>
+                                        <x-ui.badge :variant="$statusBadge">{{ $statusLabel }}</x-ui.badge>
                                     </td>
                                     <td class="px-3 py-3 text-[#080808]">
                                         {{ $training->start_date?->format('d M Y') ?? '-' }}

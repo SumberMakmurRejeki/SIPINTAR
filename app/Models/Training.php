@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Training extends Model
@@ -52,5 +53,10 @@ class Training extends Model
     public function tests(): HasMany
     {
         return $this->hasMany(Test::class);
+    }
+
+    public function preTest(): HasOne
+    {
+        return $this->hasOne(Test::class)->where('type', 'pre_test')->withDefault();
     }
 }

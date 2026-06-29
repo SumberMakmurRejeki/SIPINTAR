@@ -54,7 +54,21 @@ class TrainingController extends Controller
 
     public function show(Training $training): View
     {
-        $training->load('creator');
+        $training->load([
+            'creator',
+            'materials' => function ($query) {
+                $query->orderBy('sort_order')->orderBy('created_at');
+            },
+            'tests' => function ($query) {
+                $query->where('type', 'pre_test')
+                    ->with(['questions' => function ($q) {
+                        $q->orderBy('sort_order')->orderBy('created_at')
+                            ->with(['options' => function ($oq) {
+                                $oq->orderBy('sort_order')->orderBy('created_at');
+                            }]);
+                    }]);
+            },
+        ]);
 
         return view('pages::admin.training.show', compact('training'));
     }
