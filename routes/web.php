@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\PositionController;
+use App\Http\Controllers\Admin\PostTestController;
+use App\Http\Controllers\Admin\PostTestQuestionController;
 use App\Http\Controllers\Admin\PreTestController;
 use App\Http\Controllers\Admin\PreTestQuestionController;
 use App\Http\Controllers\Admin\TrainingController;
@@ -68,6 +70,15 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('training/{training}/pre-test/{test}/questions/{question}', [PreTestQuestionController::class, 'destroy'])->name('training.pre-test.questions.destroy');
         Route::patch('training/{training}/pre-test/{test}/questions/{question}/toggle-status', [PreTestQuestionController::class, 'toggleStatus'])->name('training.pre-test.questions.toggle-status');
         Route::get('training/{training}/pre-test/{test}/preview', [PreTestQuestionController::class, 'preview'])->name('training.pre-test.preview');
+
+        // Post-Test routes
+        Route::post('training/{training}/post-test', [PostTestController::class, 'store'])->name('training.post-test.store');
+        Route::put('training/{training}/post-test/{test}', [PostTestController::class, 'update'])->name('training.post-test.update');
+        Route::post('training/{training}/post-test/{test}/questions', [PostTestQuestionController::class, 'store'])->name('training.post-test.questions.store');
+        Route::put('training/{training}/post-test/{test}/questions/{question}', [PostTestQuestionController::class, 'update'])->name('training.post-test.questions.update');
+        Route::delete('training/{training}/post-test/{test}/questions/{question}', [PostTestQuestionController::class, 'destroy'])->name('training.post-test.questions.destroy');
+        Route::patch('training/{training}/post-test/{test}/questions/{question}/toggle-status', [PostTestQuestionController::class, 'toggleStatus'])->name('training.post-test.questions.toggle-status');
+        Route::get('training/{training}/post-test/{test}/preview', [PostTestQuestionController::class, 'preview'])->name('training.post-test.preview');
 
         Route::view('penilaian', 'pages::admin.penilaian')->name('penilaian');
         Route::view('monitoring-progress', 'pages::admin.monitoring-progress')->name('monitoring-progress');

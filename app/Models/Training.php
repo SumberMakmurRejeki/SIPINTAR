@@ -59,4 +59,9 @@ class Training extends Model
     {
         return $this->hasOne(Test::class)->where('type', 'pre_test')->withDefault();
     }
+
+    public function postTest(): HasOne
+    {
+        return $this->hasOne(Test::class)->where('type', 'post_test')->withDefault();
+    }
 }

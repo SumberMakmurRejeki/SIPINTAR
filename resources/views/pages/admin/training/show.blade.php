@@ -58,7 +58,7 @@
                     <button type="button" @click="active = 'pretest'" :class="active === 'pretest' ? 'border-b-2 border-[#080808] text-[#080808] font-medium' : 'text-[#5A5A5A] hover:text-[#080808]'" class="px-4 py-3 text-sm transition-colors whitespace-nowrap">
                         Pre-Test
                     </button>
-                    <button type="button" @click="active = 'posttest'" class="px-4 py-3 text-sm text-[#898989] transition-colors whitespace-nowrap cursor-not-allowed" disabled>
+                    <button type="button" @click="active = 'posttest'" :class="active === 'posttest' ? 'border-b-2 border-[#080808] text-[#080808] font-medium' : 'text-[#5A5A5A] hover:text-[#080808]'" class="px-4 py-3 text-sm transition-colors whitespace-nowrap">
                         Post-Test
                     </button>
                     <button type="button" @click="active = 'peserta'" class="px-4 py-3 text-sm text-[#898989] transition-colors whitespace-nowrap cursor-not-allowed" disabled>
@@ -624,8 +624,263 @@
                         </div>
                     </div>
                 </div>
-                <div x-show="active === 'posttest'" class="p-6">
-                    <x-ui.empty-state title="Coming Soon" description="Tab Post-Test akan tersedia di session berikutnya." icon="<svg class='h-6 w-6 text-[#898989]' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' d='M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.846-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z' /></svg>" />
+                <div x-show="active === 'posttest'" x-data="postTestForm()" x-init="init()" class="p-6">
+                    @php
+                        $postTest = $training->tests->firstWhere('type', 'post_test');
+                    @endphp
+
+                    {{-- Post-Test Setting Section --}}
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-base font-semibold text-[#080808]">Pengaturan Post-Test</h3>
+                            @if($postTest)
+                                <x-ui.button type="button" variant="ghost" size="sm" @click="showSettingModal = true">Edit Pengaturan</x-ui.button>
+                            @endif
+                        </div>
+
+                        @if($postTest)
+                            <div class="grid gap-4 sm:grid-cols-2">
+                                <div>
+                                    <dt class="text-sm font-medium text-[#5A5A5A]">Judul</dt>
+                                    <dd class="mt-1 text-sm text-[#080808]">{{ $postTest->title }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-sm font-medium text-[#5A5A5A]">Durasi</dt>
+                                    <dd class="mt-1 text-sm text-[#080808]">{{ $postTest->duration_minutes ? $postTest->duration_minutes . ' menit' : '-' }}</dd>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <dt class="text-sm font-medium text-[#5A5A5A]">Instruksi</dt>
+                                    <dd class="mt-1 text-sm text-[#080808]">{{ $postTest->instruction ?? '-' }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-sm font-medium text-[#5A5A5A]">Passing Grade</dt>
+                                    <dd class="mt-1 text-sm text-[#080808]">{{ $postTest->passing_grade !== null ? $postTest->passing_grade : '-' }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-sm font-medium text-[#5A5A5A]">Batas Percobaan</dt>
+                                    <dd class="mt-1 text-sm text-[#080808]">{{ $postTest->max_attempts !== null ? $postTest->max_attempts : '-' }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-sm font-medium text-[#5A5A5A]">Status</dt>
+                                    <dd class="mt-1">
+                                        @if($postTest->status === 'active')
+                                            <x-ui.badge variant="success">Aktif</x-ui.badge>
+                                        @else
+                                            <x-ui.badge variant="default">Nonaktif</x-ui.badge>
+                                        @endif
+                                    </dd>
+                                </div>
+                            </div>
+
+                            {{-- Questions Section --}}
+                            <div class="mt-6 border-t border-[#D8D8D8] pt-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-base font-semibold text-[#080808]">Daftar Soal</h3>
+                                    <div class="flex gap-2">
+                                        <x-ui.button href="{{ route('admin.training.post-test.preview', [$training, $postTest]) }}" target="_blank" variant="ghost" size="sm">Preview</x-ui.button>
+                                        <x-ui.button type="button" variant="primary" size="sm" @click="openAddQuestionModal()">
+                                            <svg class="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                            </svg>
+                                            Tambah Soal
+                                        </x-ui.button>
+                                    </div>
+                                </div>
+
+                                @php
+                                    $postQuestions = $postTest->questions ?? collect();
+                                @endphp
+                                @if($postQuestions->isEmpty())
+                                    <x-ui.empty-state
+                                        title="Belum ada soal"
+                                        description="Tambahkan soal pilihan ganda atau essay untuk post-test ini."
+                                    />
+                                @else
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full text-sm">
+                                            <thead>
+                                                <tr class="border-b border-[#D8D8D8] bg-gray-50">
+                                                    <th class="px-3 py-3 text-left font-medium text-[#5A5A5A] w-12">No</th>
+                                                    <th class="px-3 py-3 text-left font-medium text-[#5A5A5A]">Pertanyaan</th>
+                                                    <th class="px-3 py-3 text-left font-medium text-[#5A5A5A]">Jenis</th>
+                                                    <th class="px-3 py-3 text-center font-medium text-[#5A5A5A]">Skor</th>
+                                                    <th class="px-3 py-3 text-left font-medium text-[#5A5A5A]">Status</th>
+                                                    <th class="px-3 py-3 text-right font-medium text-[#5A5A5A]">Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($postQuestions as $question)
+                                                    <tr class="border-b border-[#D8D8D8] hover:bg-gray-50">
+                                                        <td class="px-3 py-3 text-[#898989]">{{ $loop->iteration }}</td>
+                                                        <td class="px-3 py-3">
+                                                            <div class="text-sm text-[#080808]">{{ Str::limit($question->question_text, 80) }}</div>
+                                                        </td>
+                                                        <td class="px-3 py-3">
+                                                            @if($question->question_type === 'multiple_choice')
+                                                                <x-ui.badge variant="default">Pilihan Ganda</x-ui.badge>
+                                                            @else
+                                                                <x-ui.badge variant="muted">Essay</x-ui.badge>
+                                                            @endif
+                                                        </td>
+                                                        <td class="px-3 py-3 text-center text-sm text-[#080808]">{{ $question->score }}</td>
+                                                        <td class="px-3 py-3">
+                                                            @if($question->status === 'active')
+                                                                <x-ui.badge variant="success">Aktif</x-ui.badge>
+                                                            @else
+                                                                <x-ui.badge variant="default">Nonaktif</x-ui.badge>
+                                                            @endif
+                                                        </td>
+                                                        <td class="px-3 py-3 text-right">
+                                                            <div class="flex flex-wrap justify-end gap-1">
+                                                                <x-ui.button type="button" variant="ghost" size="sm" @click="openEditQuestionModal({{ $loop->index }})">Edit</x-ui.button>
+                                                                <form action="{{ route('admin.training.post-test.questions.toggle-status', [$training, $postTest, $question]) }}" method="POST" class="inline">
+                                                                    @csrf
+                                                                    @method('PATCH')
+                                                                    <x-ui.button type="submit" variant="ghost" size="sm">{{ $question->status === 'active' ? 'Nonaktifkan' : 'Aktifkan' }}</x-ui.button>
+                                                                </form>
+                                                                <x-ui.button type="button" variant="ghost" size="sm" @click="openDeleteQuestionModal({{ $loop->index }})" class="text-[#EE1D36]">
+                                                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                                                    </svg>
+                                                                </x-ui.button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @endif
+                            </div>
+                        @else
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm text-[#5A5A5A]">Belum ada post-test untuk training ini.</p>
+                                <x-ui.button type="button" variant="primary" @click="showSettingModal = true">
+                                    <svg class="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                    </svg>
+                                    Buat Post-Test
+                                </x-ui.button>
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- Post-Test Setting Modal (Create/Edit) --}}
+                    <div x-show="showSettingModal" x-cloak @keydown.escape.window="showSettingModal = false" class="fixed inset-0 z-50 flex items-start justify-center p-4 overflow-y-auto">
+                        <div x-show="showSettingModal" x-transition:enter="transition-opacity ease-linear duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="showSettingModal = false" class="fixed inset-0 bg-black/50"></div>
+                        <div x-show="showSettingModal" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="relative w-full max-w-lg rounded-lg border border-[#D8D8D8] bg-white shadow-lg my-8">
+                            <div class="p-6">
+                                <h3 class="text-base font-semibold text-[#080808]" x-text="settingFormMode === 'edit' ? 'Edit Pengaturan Post-Test' : 'Buat Post-Test'"></h3>
+                                <form id="posttest-setting-form" :action="settingFormAction" method="POST" class="mt-4 space-y-4">
+                                    @csrf
+                                    <template x-if="settingFormMode === 'edit'">
+                                        <input type="hidden" name="_method" value="PUT">
+                                    </template>
+
+                                    <x-ui.input name="title" label="Judul Post-Test" required placeholder="Masukkan judul post-test" />
+
+                                    <x-ui.textarea name="instruction" label="Instruksi" placeholder="Petunjuk pengerjaan (opsional)" rows="3"></x-ui.textarea>
+
+                                    <div class="grid gap-4 sm:grid-cols-3">
+                                        <x-ui.input name="duration_minutes" type="number" label="Durasi (menit)" placeholder="30" min="1" />
+                                        <x-ui.input name="passing_grade" type="number" label="Passing Grade" required placeholder="70" min="0" max="100" step="0.01" />
+                                        <x-ui.input name="max_attempts" type="number" label="Batas Percobaan" placeholder="3" min="1" />
+                                    </div>
+
+                                    <x-ui.select name="status" label="Status" required>
+                                        <option value="active" selected>Aktif</option>
+                                        <option value="inactive">Nonaktif</option>
+                                    </x-ui.select>
+                                </form>
+                            </div>
+                            <div class="flex items-center justify-end gap-3 border-t border-[#D8D8D8] px-6 py-4">
+                                <x-ui.button type="button" variant="secondary" @click="showSettingModal = false">Batal</x-ui.button>
+                                <x-ui.button type="submit" form="posttest-setting-form" variant="primary">Simpan</x-ui.button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Add/Edit Question Modal --}}
+                    <div x-show="showQuestionModal" x-cloak @keydown.escape.window="showQuestionModal = false" class="fixed inset-0 z-50 flex items-start justify-center p-4 overflow-y-auto">
+                        <div x-show="showQuestionModal" x-transition:enter="transition-opacity ease-linear duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="showQuestionModal = false" class="fixed inset-0 bg-black/50"></div>
+                        <div x-show="showQuestionModal" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="relative w-full max-w-2xl rounded-lg border border-[#D8D8D8] bg-white shadow-lg my-8">
+                            <div class="p-6">
+                                <h3 class="text-base font-semibold text-[#080808]" x-text="questionFormMode === 'edit' ? 'Edit Soal' : 'Tambah Soal'"></h3>
+                                <form id="posttest-question-form" :action="questionFormAction" method="POST" class="mt-4 space-y-4">
+                                    @csrf
+                                    <template x-if="questionFormMode === 'edit'">
+                                        <input type="hidden" name="_method" value="PUT">
+                                    </template>
+
+                                    <x-ui.textarea name="question_text" label="Pertanyaan" required placeholder="Tulis pertanyaan..." rows="3"></x-ui.textarea>
+
+                                    <div class="grid gap-4 sm:grid-cols-3">
+                                        <x-ui.select name="question_type" label="Jenis Soal" required x-model="questionType">
+                                            <option value="multiple_choice">Pilihan Ganda</option>
+                                            <option value="essay">Essay</option>
+                                        </x-ui.select>
+                                        <x-ui.input name="score" type="number" label="Skor" required placeholder="10" min="0" step="0.01" />
+                                        <x-ui.input name="sort_order" type="number" label="Urutan" required placeholder="0" min="0" />
+                                    </div>
+
+                                    <x-ui.select name="status" label="Status Soal" required>
+                                        <option value="active" selected>Aktif</option>
+                                        <option value="inactive">Nonaktif</option>
+                                    </x-ui.select>
+
+                                    {{-- Options for multiple choice --}}
+                                    <div x-show="questionType === 'multiple_choice'">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <label class="block text-sm font-medium text-[#080808]">Pilihan Jawaban</label>
+                                            <x-ui.button type="button" variant="ghost" size="sm" @click="addOption()">+ Tambah Opsi</x-ui.button>
+                                        </div>
+                                        <div class="space-y-3">
+                                            <template x-for="(option, index) in questionOptions" :key="index">
+                                                <div class="flex items-start gap-2">
+                                                    <input type="hidden" :name="`options[${index}][option_label]`" :value="option.label">
+                                                    <div class="w-8 flex-shrink-0 pt-2 text-sm font-medium text-[#5A5A5A]" x-text="option.label + '.'"></div>
+                                                    <input type="text" :name="`options[${index}][option_text]`" x-model="option.text" placeholder="Teks jawaban..." class="flex-1 rounded-md border border-[#D8D8D8] px-3 py-2 text-sm text-[#080808] focus:border-[#080808] focus:outline-none focus:ring-1 focus:ring-[#080808]">
+                                                    <label class="flex items-center gap-1 pt-2 text-sm text-[#5A5A5A] whitespace-nowrap cursor-pointer">
+                                                        <input type="radio" name="correct_option" :value="index" @change="option.is_correct = true" :checked="option.is_correct" class="accent-[#080808]">
+                                                        Benar
+                                                    </label>
+                                                    <input type="hidden" :name="`options[${index}][is_correct]`" :value="option.is_correct ? '1' : '0'">
+                                                    <x-ui.button type="button" variant="ghost" size="sm" @click="removeOption(index)" class="text-[#EE1D36] pt-1" x-show="questionOptions.length > 2">
+                                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                                        </svg>
+                                                    </x-ui.button>
+                                                </div>
+                                            </template>
+                                        </div>
+                                        <p class="mt-1 text-xs text-[#898989]">Minimal 2 opsi. Pilih radio "Benar" untuk kunci jawaban.</p>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="flex items-center justify-end gap-3 border-t border-[#D8D8D8] px-6 py-4">
+                                <x-ui.button type="button" variant="secondary" @click="showQuestionModal = false">Batal</x-ui.button>
+                                <x-ui.button type="submit" form="posttest-question-form" variant="primary">Simpan</x-ui.button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Delete Question Modal --}}
+                    <div x-show="showDeleteQuestionModal" x-cloak @keydown.escape.window="showDeleteQuestionModal = false" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+                        <div x-show="showDeleteQuestionModal" x-transition:enter="transition-opacity ease-linear duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="showDeleteQuestionModal = false" class="fixed inset-0 bg-black/50"></div>
+                        <div x-show="showDeleteQuestionModal" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="relative w-full max-w-lg rounded-lg border border-[#D8D8D8] bg-white p-6 shadow-lg">
+                            <h3 class="text-base font-semibold text-[#080808]">Hapus Soal Permanen?</h3>
+                            <p x-text="deleteQuestionMessage" class="mt-1 text-sm text-[#5A5A5A]"></p>
+                            <p class="mt-2 text-xs text-[#898989]">Soal yang dihapus tidak dapat dikembalikan.</p>
+                            <div class="mt-6 flex items-center justify-end gap-3">
+                                <x-ui.button type="button" variant="secondary" @click="showDeleteQuestionModal = false">Batal</x-ui.button>
+                                <form :action="deleteQuestionAction" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <x-ui.button type="submit" variant="danger">Hapus Permanen</x-ui.button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div x-show="active === 'peserta'" class="p-6">
                     <x-ui.empty-state title="Coming Soon" description="Tab Peserta akan tersedia di session berikutnya." icon="<svg class='h-6 w-6 text-[#898989]' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' d='M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.953 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z' /></svg>" />
@@ -886,6 +1141,144 @@
                 openDeleteQuestionModal(index) {
                     const question = this.questions[index];
                     this.deleteQuestionAction = `/admin/training/{{ $training->id }}/pre-test/{{ $preTest->id }}/questions/${question.id}`;
+                    this.deleteQuestionMessage = `"${question.question_text.substring(0, 60)}..." akan dihapus permanen.`;
+                    this.showDeleteQuestionModal = true;
+                },
+
+                addOption() {
+                    const labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                    const nextLabel = labels[this.questionOptions.length] || (this.questionOptions.length + 1);
+                    this.questionOptions.push({
+                        label: nextLabel,
+                        text: '',
+                        is_correct: false,
+                    });
+                },
+
+                removeOption(index) {
+                    this.questionOptions.splice(index, 1);
+                    // Re-assign labels
+                    const labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                    this.questionOptions.forEach((opt, i) => {
+                        opt.label = labels[i] || (i + 1);
+                    });
+                },
+            }));
+
+            Alpine.data('postTestForm', () => ({
+                showSettingModal: false,
+                settingFormMode: 'create',
+                settingFormAction: '',
+                showQuestionModal: false,
+                questionFormMode: 'create',
+                questionFormAction: '',
+                questionType: 'multiple_choice',
+                questionOptions: [],
+                showDeleteQuestionModal: false,
+                deleteQuestionAction: '',
+                deleteQuestionMessage: '',
+                questions: @json($postQuestions ?? collect()),
+                postTest: @json($postTest),
+
+                init() {
+                    @if($postTest)
+                        this.settingFormMode = 'edit';
+                        this.settingFormAction = `/admin/training/{{ $training->id }}/post-test/{{ $postTest->id }}`;
+                    @else
+                        this.settingFormMode = 'create';
+                        this.settingFormAction = `/admin/training/{{ $training->id }}/post-test`;
+                    @endif
+                },
+
+                openAddQuestionModal() {
+                    this.questionFormMode = 'create';
+                    this.questionType = 'multiple_choice';
+                    this.questionOptions = [
+                        { label: 'A', text: '', is_correct: true },
+                        { label: 'B', text: '', is_correct: false },
+                        { label: 'C', text: '', is_correct: false },
+                        { label: 'D', text: '', is_correct: false },
+                    ];
+                    this.questionFormAction = `/admin/training/{{ $training->id }}/post-test/{{ $postTest->id }}/questions`;
+                    this.$nextTick(() => {
+                        const form = document.getElementById('posttest-question-form');
+                        if (form) {
+                            form.querySelector('[name="question_text"]').value = '';
+                            form.querySelector('[name="question_type"]').value = 'multiple_choice';
+                            form.querySelector('[name="score"]').value = '';
+                            form.querySelector('[name="sort_order"]').value = this.questions.length;
+                            form.querySelector('[name="status"]').value = 'active';
+                        }
+                    });
+                    this.showQuestionModal = true;
+                },
+
+                openEditQuestionModal(index) {
+                    const question = this.questions[index];
+                    this.questionFormMode = 'edit';
+                    this.questionType = question.question_type;
+                    this.questionFormAction = `/admin/training/{{ $training->id }}/post-test/{{ $postTest->id }}/questions/${question.id}`;
+
+                    const existingOptions = (question.options || []).map(opt => ({
+                        label: opt.option_label,
+                        text: opt.option_text,
+                        is_correct: opt.is_correct,
+                    }));
+
+                    this.questionOptions = existingOptions.length >= 2
+                        ? existingOptions
+                        : [
+                            { label: 'A', text: '', is_correct: true },
+                            { label: 'B', text: '', is_correct: false },
+                        ];
+
+                    this.$nextTick(() => {
+                        const form = document.getElementById('posttest-question-form');
+                        if (form) {
+                            form.querySelector('[name="question_text"]').value = question.question_text;
+                            form.querySelector('[name="question_type"]').value = question.question_type;
+                            form.querySelector('[name="score"]').value = question.score;
+                            form.querySelector('[name="sort_order"]').value = question.sort_order;
+                            form.querySelector('[name="status"]').value = question.status;
+
+                            // Clear and repopulate hidden option inputs
+                            form.querySelectorAll('input[name^="options["]').forEach(el => el.remove());
+                            this.questionOptions.forEach((opt, i) => {
+                                const labelInput = document.createElement('input');
+                                labelInput.type = 'hidden';
+                                labelInput.name = `options[${i}][option_label]`;
+                                labelInput.value = opt.label;
+                                form.querySelector('#posttest-question-form').appendChild(labelInput);
+
+                                const textInput = document.createElement('input');
+                                textInput.type = 'hidden';
+                                textInput.name = `options[${i}][option_text]`;
+                                textInput.value = opt.text;
+                                form.appendChild(textInput);
+
+                                const correctInput = document.createElement('input');
+                                correctInput.type = 'hidden';
+                                correctInput.name = `options[${i}][is_correct]`;
+                                correctInput.value = opt.is_correct ? '1' : '0';
+                                form.appendChild(correctInput);
+                            });
+
+                            // Set correct radio
+                            const correctIdx = this.questionOptions.findIndex(o => o.is_correct);
+                            if (correctIdx >= 0) {
+                                form.querySelectorAll('input[name="correct_option"]').forEach((radio, i) => {
+                                    radio.checked = (i === correctIdx);
+                                });
+                            }
+                        }
+                    });
+
+                    this.showQuestionModal = true;
+                },
+
+                openDeleteQuestionModal(index) {
+                    const question = this.questions[index];
+                    this.deleteQuestionAction = `/admin/training/{{ $training->id }}/post-test/{{ $postTest->id }}/questions/${question.id}`;
                     this.deleteQuestionMessage = `"${question.question_text.substring(0, 60)}..." akan dihapus permanen.`;
                     this.showDeleteQuestionModal = true;
                 },

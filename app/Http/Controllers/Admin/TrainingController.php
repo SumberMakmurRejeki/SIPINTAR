@@ -60,7 +60,7 @@ class TrainingController extends Controller
                 $query->orderBy('sort_order')->orderBy('created_at');
             },
             'tests' => function ($query) {
-                $query->where('type', 'pre_test')
+                $query->whereIn('type', ['pre_test', 'post_test'])
                     ->with(['questions' => function ($q) {
                         $q->orderBy('sort_order')->orderBy('created_at')
                             ->with(['options' => function ($oq) {
