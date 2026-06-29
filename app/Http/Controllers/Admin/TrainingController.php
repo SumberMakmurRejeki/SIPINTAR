@@ -17,7 +17,7 @@ class TrainingController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Training::withCount('participants')->with('creator');
+        $query = Training::withCount('trainingParticipants')->with('creator');
 
         if ($request->filled('search')) {
             $query->where('title', 'like', '%'.$request->search.'%');
@@ -101,7 +101,7 @@ class TrainingController extends Controller
 
     public function destroy(Training $training): RedirectResponse
     {
-        if ($training->participants()->exists()) {
+        if ($training->trainingParticipants()->exists()) {
             return redirect()->back()->with('error', 'Training sudah memiliki peserta. Arsipkan training untuk menjaga histori data.');
         }
 
@@ -123,7 +123,7 @@ class TrainingController extends Controller
         if (! $request->boolean('force')) {
             $warnings = [];
 
-            if (! $training->participants()->exists()) {
+            if (! $training->trainingParticipants()->exists()) {
                 $warnings[] = 'Belum ada peserta.';
             }
 

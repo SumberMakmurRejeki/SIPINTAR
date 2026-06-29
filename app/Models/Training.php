@@ -45,7 +45,7 @@ class Training extends Model
         return $this->hasMany(TrainingMaterial::class);
     }
 
-    public function participants(): HasMany
+    public function trainingParticipants(): HasMany
     {
         return $this->hasMany(TrainingParticipant::class);
     }

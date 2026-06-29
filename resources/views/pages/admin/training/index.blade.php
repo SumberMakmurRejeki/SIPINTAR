@@ -85,7 +85,7 @@
                                     <td class="px-3 py-3 text-[#080808]">
                                         <div class="font-medium">{{ $training->title }}</div>
                                     </td>
-                                    <td class="px-3 py-3 text-[#080808]">{{ $training->participants_count }}</td>
+                                    <td class="px-3 py-3 text-[#080808]">{{ $training->training_participants_count }}</td>
                                     <td class="px-3 py-3">
                                         <x-ui.badge :variant="$statusBadge">{{ $statusLabel }}</x-ui.badge>
                                     </td>
