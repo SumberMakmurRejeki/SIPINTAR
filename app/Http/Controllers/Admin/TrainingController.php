@@ -47,12 +47,12 @@ class TrainingController extends Controller
 
     public function store(StoreTrainingRequest $request): RedirectResponse
     {
-        Training::create([
+        $training = Training::create([
             ...$request->validated(),
             'created_by' => $request->user()->id,
         ]);
 
-        return redirect()->route('admin.training.index')->with('success', 'Training berhasil ditambahkan.');
+        return redirect()->route('admin.training.show', $training)->with('success', 'Training berhasil dibuat. Lanjutkan melengkapi detail training.');
     }
 
     public function show(Training $training): View
