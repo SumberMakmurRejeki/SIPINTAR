@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreTrainingRequest;
 use App\Http\Requests\Admin\UpdateTrainingRequest;
+use App\Models\Department;
+use App\Models\Employee;
+use App\Models\Position;
 use App\Models\Training;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -68,9 +71,20 @@ class TrainingController extends Controller
                             }]);
                     }]);
             },
+            'trainingParticipants' => function ($query) {
+                $query->with(['employee.user', 'employee.department', 'employee.position'])
+                    ->orderBy('created_at', 'desc');
+            },
         ]);
 
-        return view('pages::admin.training.show', compact('training'));
+        $allDepartments = Department::where('status', 'active')->orderBy('name')->get();
+        $allPositions = Position::where('status', 'active')->orderBy('name')->get();
+        $allActiveEmployees = Employee::where('status', 'active')
+            ->with(['department', 'position'])
+            ->orderBy('name')
+            ->get();
+
+        return view('pages::admin.training.show', compact('training', 'allDepartments', 'allPositions', 'allActiveEmployees'));
     }
 
     public function edit(Training $training): View

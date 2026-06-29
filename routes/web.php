@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\PreTestController;
 use App\Http\Controllers\Admin\PreTestQuestionController;
 use App\Http\Controllers\Admin\TrainingController;
 use App\Http\Controllers\Admin\TrainingMaterialController;
+use App\Http\Controllers\Admin\TrainingParticipantController;
 use App\Models\Department;
 use App\Models\Position;
 use App\Models\User;
@@ -79,6 +80,11 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('training/{training}/post-test/{test}/questions/{question}', [PostTestQuestionController::class, 'destroy'])->name('training.post-test.questions.destroy');
         Route::patch('training/{training}/post-test/{test}/questions/{question}/toggle-status', [PostTestQuestionController::class, 'toggleStatus'])->name('training.post-test.questions.toggle-status');
         Route::get('training/{training}/post-test/{test}/preview', [PostTestQuestionController::class, 'preview'])->name('training.post-test.preview');
+
+        // Training participants (nested under training)
+        Route::post('training/{training}/participants', [TrainingParticipantController::class, 'store'])->name('training.participants.store');
+        Route::get('training/{training}/participants/{participant}', [TrainingParticipantController::class, 'show'])->name('training.participants.show');
+        Route::delete('training/{training}/participants/{participant}', [TrainingParticipantController::class, 'destroy'])->name('training.participants.destroy');
 
         Route::view('penilaian', 'pages::admin.penilaian')->name('penilaian');
         Route::view('monitoring-progress', 'pages::admin.monitoring-progress')->name('monitoring-progress');

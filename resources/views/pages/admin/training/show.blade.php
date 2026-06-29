@@ -61,7 +61,7 @@
                     <button type="button" @click="active = 'posttest'" :class="active === 'posttest' ? 'border-b-2 border-[#080808] text-[#080808] font-medium' : 'text-[#5A5A5A] hover:text-[#080808]'" class="px-4 py-3 text-sm transition-colors whitespace-nowrap">
                         Post-Test
                     </button>
-                    <button type="button" @click="active = 'peserta'" class="px-4 py-3 text-sm text-[#898989] transition-colors whitespace-nowrap cursor-not-allowed" disabled>
+                    <button type="button" @click="active = 'peserta'" :class="active === 'peserta' ? 'border-b-2 border-[#080808] text-[#080808] font-medium' : 'text-[#5A5A5A] hover:text-[#080808]'" class="px-4 py-3 text-sm transition-colors whitespace-nowrap">
                         Peserta
                     </button>
                     <button type="button" @click="active = 'hasil'" class="px-4 py-3 text-sm text-[#898989] transition-colors whitespace-nowrap cursor-not-allowed" disabled>
@@ -882,8 +882,334 @@
                         </div>
                     </div>
                 </div>
-                <div x-show="active === 'peserta'" class="p-6">
-                    <x-ui.empty-state title="Coming Soon" description="Tab Peserta akan tersedia di session berikutnya." icon="<svg class='h-6 w-6 text-[#898989]' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' d='M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.953 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z' /></svg>" />
+                <div x-show="active === 'peserta'" x-data="participantForm()" x-init="init()" class="p-6">
+                    <div class="space-y-4">
+                        {{-- Add Participant Button --}}
+                        <div class="flex justify-end">
+                            <x-ui.button type="button" variant="primary" @click="showAssignModal = true">
+                                <svg class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
+                                Tambah Peserta
+                            </x-ui.button>
+                        </div>
+
+                        {{-- Search & Filters --}}
+                        @if($training->trainingParticipants->isNotEmpty())
+                        <div class="flex flex-wrap gap-3">
+                            <div class="flex-1 min-w-[200px]">
+                                <input type="text" x-model="search" placeholder="Cari nama atau username..." class="w-full rounded-md border border-[#D8D8D8] px-3 py-2 text-sm text-[#080808] placeholder:text-[#898989] focus:border-[#080808] focus:outline-none focus:ring-1 focus:ring-[#080808]">
+                            </div>
+                            <x-ui.select x-model="filterDepartment" class="w-[200px]">
+                                <option value="">Semua Departemen</option>
+                                @foreach($allDepartments as $dept)
+                                    <option value="{{ $dept->id }}">{{ $dept->name }}</option>
+                                @endforeach
+                            </x-ui.select>
+                            <x-ui.select x-model="filterPosition" class="w-[200px]">
+                                <option value="">Semua Jabatan</option>
+                                @foreach($allPositions as $pos)
+                                    <option value="{{ $pos->id }}">{{ $pos->name }}</option>
+                                @endforeach
+                            </x-ui.select>
+                            <x-ui.select x-model="filterProgress" class="w-[200px]">
+                                <option value="">Semua Status</option>
+                                <option value="not_started">Belum Mulai</option>
+                                <option value="in_progress">Sedang Berjalan</option>
+                                <option value="waiting_grading">Menunggu Penilaian</option>
+                                <option value="passed">Lulus</option>
+                                <option value="failed">Tidak Lulus</option>
+                                <option value="retake">Remidial</option>
+                            </x-ui.select>
+                        </div>
+                        @endif
+
+                        {{-- Participants Table --}}
+                        @if($training->trainingParticipants->isEmpty())
+                            <x-ui.empty-state
+                                title="Belum ada peserta"
+                                description="Tambahkan peserta untuk training ini."
+                            />
+                        @else
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="border-b border-[#D8D8D8] bg-gray-50">
+                                            <th class="px-3 py-3 text-left font-medium text-[#5A5A5A]">Nama Karyawan</th>
+                                            <th class="px-3 py-3 text-left font-medium text-[#5A5A5A]">Username</th>
+                                            <th class="px-3 py-3 text-left font-medium text-[#5A5A5A]">Departemen</th>
+                                            <th class="px-3 py-3 text-left font-medium text-[#5A5A5A]">Jabatan</th>
+                                            <th class="px-3 py-3 text-center font-medium text-[#5A5A5A]">Progress</th>
+                                            <th class="px-3 py-3 text-center font-medium text-[#5A5A5A]">Pre-Test</th>
+                                            <th class="px-3 py-3 text-center font-medium text-[#5A5A5A]">Materi</th>
+                                            <th class="px-3 py-3 text-center font-medium text-[#5A5A5A]">Post-Test</th>
+                                            <th class="px-3 py-3 text-center font-medium text-[#5A5A5A]">Nilai Akhir</th>
+                                            <th class="px-3 py-3 text-right font-medium text-[#5A5A5A]">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($training->trainingParticipants as $participant)
+                                            <tr class="border-b border-[#D8D8D8] hover:bg-gray-50"
+                                                x-show="matchesFilter({{ json_encode($participant) }})"
+                                                data-name="{{ strtolower($participant->employee->name) }}"
+                                                data-username="{{ strtolower($participant->employee->user->username ?? '') }}"
+                                                data-department="{{ $participant->employee->department_id }}"
+                                                data-position="{{ $participant->employee->position_id }}"
+                                                data-progress="{{ $participant->progress_status }}"
+                                            >
+                                                <td class="px-3 py-3">
+                                                    <div class="font-medium text-[#080808]">{{ $participant->employee->name }}</div>
+                                                </td>
+                                                <td class="px-3 py-3 text-[#5A5A5A]">{{ $participant->employee->user->username ?? '-' }}</td>
+                                                <td class="px-3 py-3 text-[#5A5A5A]">{{ $participant->employee->department->name ?? '-' }}</td>
+                                                <td class="px-3 py-3 text-[#5A5A5A]">{{ $participant->employee->position->name ?? '-' }}</td>
+                                                <td class="px-3 py-3 text-center">
+                                                    @php
+                                                        $progressBadge = match($participant->progress_status) {
+                                                            'not_started' => 'default',
+                                                            'in_progress' => 'warning',
+                                                            'waiting_grading' => 'warning',
+                                                            'passed' => 'success',
+                                                            'failed' => 'danger',
+                                                            'retake' => 'muted',
+                                                            default => 'default',
+                                                        };
+                                                        $progressLabel = match($participant->progress_status) {
+                                                            'not_started' => 'Belum Mulai',
+                                                            'in_progress' => 'Berjalan',
+                                                            'waiting_grading' => 'Menilai',
+                                                            'passed' => 'Lulus',
+                                                            'failed' => 'Tidak Lulus',
+                                                            'retake' => 'Remidial',
+                                                            default => $participant->progress_status,
+                                                        };
+                                                    @endphp
+                                                    <x-ui.badge :variant="$progressBadge">{{ $progressLabel }}</x-ui-badge>
+                                                </td>
+                                                <td class="px-3 py-3 text-center">
+                                                    @php
+                                                        $preBadge = match($participant->pre_test_status) {
+                                                            'locked' => 'default',
+                                                            'not_started' => 'muted',
+                                                            'in_progress' => 'warning',
+                                                            'completed' => 'success',
+                                                            default => 'default',
+                                                        };
+                                                        $preLabel = match($participant->pre_test_status) {
+                                                            'locked' => 'Terkunci',
+                                                            'not_started' => 'Belum',
+                                                            'in_progress' => 'Berjalan',
+                                                            'completed' => 'Selesai',
+                                                            default => $participant->pre_test_status,
+                                                        };
+                                                    @endphp
+                                                    <x-ui.badge :variant="$preBadge">{{ $preLabel }}</x-ui-badge>
+                                                    @if($participant->pre_test_score !== null)
+                                                        <div class="mt-1 text-xs text-[#5A5A5A]">{{ $participant->pre_test_score }}</div>
+                                                    @endif
+                                                </td>
+                                                <td class="px-3 py-3 text-center">
+                                                    @php
+                                                        $matBadge = match($participant->material_status) {
+                                                            'locked' => 'default',
+                                                            'not_started' => 'muted',
+                                                            'accessed' => 'warning',
+                                                            'completed' => 'success',
+                                                            default => 'default',
+                                                        };
+                                                        $matLabel = match($participant->material_status) {
+                                                            'locked' => 'Terkunci',
+                                                            'not_started' => 'Belum',
+                                                            'accessed' => 'Diakses',
+                                                            'completed' => 'Selesai',
+                                                            default => $participant->material_status,
+                                                        };
+                                                    @endphp
+                                                    <x-ui.badge :variant="$matBadge">{{ $matLabel }}</x-ui-badge>
+                                                </td>
+                                                <td class="px-3 py-3 text-center">
+                                                    @php
+                                                        $postBadge = match($participant->post_test_status) {
+                                                            'locked' => 'default',
+                                                            'not_started' => 'muted',
+                                                            'in_progress' => 'warning',
+                                                            'waiting_grading' => 'warning',
+                                                            'completed' => 'success',
+                                                            'failed' => 'danger',
+                                                            'retake' => 'muted',
+                                                            default => 'default',
+                                                        };
+                                                        $postLabel = match($participant->post_test_status) {
+                                                            'locked' => 'Terkunci',
+                                                            'not_started' => 'Belum',
+                                                            'in_progress' => 'Berjalan',
+                                                            'waiting_grading' => 'Menilai',
+                                                            'completed' => 'Selesai',
+                                                            'failed' => 'Tidak Lulus',
+                                                            'retake' => 'Remidial',
+                                                            default => $participant->post_test_status,
+                                                        };
+                                                    @endphp
+                                                    <x-ui.badge :variant="$postBadge">{{ $postLabel }}</x-ui-badge>
+                                                    @if($participant->post_test_score !== null)
+                                                        <div class="mt-1 text-xs text-[#5A5A5A]">{{ $participant->post_test_score }}</div>
+                                                    @endif
+                                                </td>
+                                                <td class="px-3 py-3 text-center">
+                                                    @if($participant->final_score !== null)
+                                                        <span class="font-medium text-[#080808]">{{ $participant->final_score }}</span>
+                                                    @else
+                                                        <span class="text-[#898989]">-</span>
+                                                    @endif
+                                                </td>
+                                                <td class="px-3 py-3 text-right">
+                                                    <div class="flex flex-wrap justify-end gap-1">
+                                                        <x-ui.button type="button" variant="ghost" size="sm" @click="openDetailModal({{ json_encode($participant->load('employee.user')) }})">Detail</x-ui.button>
+                                                        <x-ui.button type="button" variant="ghost" size="sm" @click="openDeleteModal({{ $participant->id }}, '{{ addslashes($participant->employee->name) }}')" class="text-[#EE1D36]">
+                                                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                                            </svg>
+                                                        </x-ui.button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- Assign Participant Modal --}}
+                    <div x-show="showAssignModal" x-cloak @keydown.escape.window="showAssignModal = false" class="fixed inset-0 z-50 flex items-start justify-center p-4 overflow-y-auto">
+                        <div x-show="showAssignModal" x-transition:enter="transition-opacity ease-linear duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="showAssignModal = false" class="fixed inset-0 bg-black/50"></div>
+                        <div x-show="showAssignModal" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="relative w-full max-w-2xl rounded-lg border border-[#D8D8D8] bg-white shadow-lg my-8">
+                            <div class="p-6">
+                                <h3 class="text-base font-semibold text-[#080808]">Tambah Peserta Training</h3>
+                                <form id="assign-participant-form" action="{{ route('admin.training.participants.store', $training) }}" method="POST" class="mt-4 space-y-4">
+                                    @csrf
+
+                                    <x-ui.select name="assignment_type" label="Metode Penugasan" required x-model="assignmentType">
+                                        <option value="">Pilih metode</option>
+                                        <option value="all">Semua Karyawan Aktif</option>
+                                        <option value="department">Berdasarkan Departemen</option>
+                                        <option value="position">Berdasarkan Jabatan</option>
+                                        <option value="employees">Pilih Karyawan Tertentu</option>
+                                    </x-ui.select>
+
+                                    <x-ui.select name="department_id" label="Departemen" x-show="assignmentType === 'department'">
+                                        <option value="">Pilih departemen</option>
+                                        @foreach($allDepartments as $dept)
+                                            <option value="{{ $dept->id }}">{{ $dept->name }}</option>
+                                        @endforeach
+                                    </x-ui.select>
+
+                                    <x-ui.select name="position_id" label="Jabatan" x-show="assignmentType === 'position'">
+                                        <option value="">Pilih jabatan</option>
+                                        @foreach($allPositions as $pos)
+                                            <option value="{{ $pos->id }}">{{ $pos->name }}</option>
+                                        @endforeach
+                                    </x-ui.select>
+
+                                    <div x-show="assignmentType === 'employees'">
+                                        <label class="block text-sm font-medium text-[#080808] mb-2">Pilih Karyawan</label>
+                                        <input type="text" x-model="employeeSearch" placeholder="Cari karyawan..." class="w-full rounded-md border border-[#D8D8D8] px-3 py-2 text-sm text-[#080808] placeholder:text-[#898989] focus:border-[#080808] focus:outline-none focus:ring-1 focus:ring-[#080808] mb-2">
+                                        <div class="max-h-60 overflow-y-auto border border-[#D8D8D8] rounded-md">
+                                            @foreach($allActiveEmployees as $emp)
+                                                <label class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 cursor-pointer" x-show="filterEmployee({{ json_encode($emp) }})">
+                                                    <input type="checkbox" name="employee_ids[]" value="{{ $emp->id }}" class="rounded border-[#D8D8D8] accent-[#080808]">
+                                                    <div>
+                                                        <span class="text-sm text-[#080808]">{{ $emp->name }}</span>
+                                                        <span class="text-xs text-[#898989] ml-2">{{ $emp->department?->name ?? '-' }} - {{ $emp->position?->name ?? '-' }}</span>
+                                                    </div>
+                                                </label>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="flex items-center justify-end gap-3 border-t border-[#D8D8D8] px-6 py-4">
+                                <x-ui.button type="button" variant="secondary" @click="showAssignModal = false">Batal</x-ui.button>
+                                <x-ui.button type="submit" form="assign-participant-form" variant="primary">Simpan</x-ui.button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Delete Participant Modal --}}
+                    <div x-show="showDeleteModal" x-cloak @keydown.escape.window="showDeleteModal = false" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+                        <div x-show="showDeleteModal" x-transition:enter="transition-opacity ease-linear duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="showDeleteModal = false" class="fixed inset-0 bg-black/50"></div>
+                        <div x-show="showDeleteModal" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="relative w-full max-w-lg rounded-lg border border-[#D8D8D8] bg-white p-6 shadow-lg">
+                            <h3 class="text-base font-semibold text-[#080808]">Hapus Peserta dari Training?</h3>
+                            <p x-text="deleteMessage" class="mt-1 text-sm text-[#5A5A5A]"></p>
+                            <p class="mt-2 text-xs text-[#898989]">Peserta yang sudah memiliki progress tidak dapat dihapus.</p>
+                            <div class="mt-6 flex items-center justify-end gap-3">
+                                <x-ui.button type="button" variant="secondary" @click="showDeleteModal = false">Batal</x-ui.button>
+                                <form :action="deleteAction" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <x-ui.button type="submit" variant="danger">Hapus Peserta</x-ui.button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Detail Participant Modal --}}
+                    <div x-show="showDetailModal" x-cloak @keydown.escape.window="showDetailModal = false" class="fixed inset-0 z-50 flex items-start justify-center p-4 overflow-y-auto">
+                        <div x-show="showDetailModal" x-transition:enter="transition-opacity ease-linear duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="showDetailModal = false" class="fixed inset-0 bg-black/50"></div>
+                        <div x-show="showDetailModal" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="relative w-full max-w-lg rounded-lg border border-[#D8D8D8] bg-white shadow-lg my-8">
+                            <div class="p-6">
+                                <h3 class="text-base font-semibold text-[#080808]">Detail Peserta</h3>
+                                <div class="mt-4 space-y-4">
+                                    <div class="grid gap-3 sm:grid-cols-2">
+                                        <div>
+                                            <dt class="text-sm font-medium text-[#5A5A5A]">Nama</dt>
+                                            <dd class="mt-1 text-sm text-[#080808]" x-text="detailData.name"></dd>
+                                        </div>
+                                        <div>
+                                            <dt class="text-sm font-medium text-[#5A5A5A]">Username</dt>
+                                            <dd class="mt-1 text-sm text-[#080808]" x-text="detailData.username"></dd>
+                                        </div>
+                                        <div>
+                                            <dt class="text-sm font-medium text-[#5A5A5A]">Departemen</dt>
+                                            <dd class="mt-1 text-sm text-[#080808]" x-text="detailData.department"></dd>
+                                        </div>
+                                        <div>
+                                            <dt class="text-sm font-medium text-[#5A5A5A]">Jabatan</dt>
+                                            <dd class="mt-1 text-sm text-[#080808]" x-text="detailData.position"></dd>
+                                        </div>
+                                    </div>
+                                    <div class="border-t border-[#D8D8D8] pt-4">
+                                        <h4 class="text-sm font-semibold text-[#080808] mb-3">Status Progress</h4>
+                                        <div class="grid gap-3 sm:grid-cols-2">
+                                            <div>
+                                                <dt class="text-sm font-medium text-[#5A5A5A]">Progress</dt>
+                                                <dd class="mt-1 text-sm text-[#080808]" x-text="detailData.progress_status"></dd>
+                                            </div>
+                                            <div>
+                                                <dt class="text-sm font-medium text-[#5A5A5A]">Pre-Test</dt>
+                                                <dd class="mt-1 text-sm text-[#080808]" x-text="detailData.pre_test_status + (detailData.pre_test_score ? ' (' + detailData.pre_test_score + ')' : '')"></dd>
+                                            </div>
+                                            <div>
+                                                <dt class="text-sm font-medium text-[#5A5A5A]">Materi</dt>
+                                                <dd class="mt-1 text-sm text-[#080808]" x-text="detailData.material_status"></dd>
+                                            </div>
+                                            <div>
+                                                <dt class="text-sm font-medium text-[#5A5A5A]">Post-Test</dt>
+                                                <dd class="mt-1 text-sm text-[#080808]" x-text="detailData.post_test_status + (detailData.post_test_score ? ' (' + detailData.post_test_score + ')' : '')"></dd>
+                                            </div>
+                                            <div>
+                                                <dt class="text-sm font-medium text-[#5A5A5A]">Nilai Akhir</dt>
+                                                <dd class="mt-1 text-sm text-[#080808]" x-text="detailData.final_score ?? '-'"></dd>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-end gap-3 border-t border-[#D8D8D8] px-6 py-4">
+                                <x-ui.button type="button" variant="secondary" @click="showDetailModal = false">Tutup</x-ui.button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div x-show="active === 'hasil'" class="p-6">
                     <x-ui.empty-state title="Coming Soon" description="Tab Hasil akan tersedia di session berikutnya." icon="<svg class='h-6 w-6 text-[#898989]' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' d='M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z' /></svg>" />
@@ -1300,6 +1626,79 @@
                     this.questionOptions.forEach((opt, i) => {
                         opt.label = labels[i] || (i + 1);
                     });
+                },
+            }));
+
+            Alpine.data('participantForm', () => ({
+                showAssignModal: false,
+                showDeleteModal: false,
+                showDetailModal: false,
+                assignmentType: '',
+                employeeSearch: '',
+                search: '',
+                filterDepartment: '',
+                filterPosition: '',
+                filterProgress: '',
+                deleteAction: '',
+                deleteMessage: '',
+                detailData: {},
+                init() {},
+                filterEmployee(emp) {
+                    if (!this.employeeSearch) return true;
+                    const q = this.employeeSearch.toLowerCase();
+                    const name = (emp.name || '').toLowerCase();
+                    const dept = (emp.department?.name || '').toLowerCase();
+                    const pos = (emp.position?.name || '').toLowerCase();
+                    return name.includes(q) || dept.includes(q) || pos.includes(q);
+                },
+                openDeleteModal(id, name) {
+                    this.deleteAction = `/admin/training/{{ $training->id }}/participants/${id}`;
+                    this.deleteMessage = `"${name}" akan dihapus dari training ini.`;
+                    this.showDeleteModal = true;
+                },
+                openDetailModal(participant) {
+                    this.detailData = {
+                        name: participant.employee?.name ?? '-',
+                        username: participant.employee?.user?.username ?? '-',
+                        department: participant.employee?.department?.name ?? '-',
+                        position: participant.employee?.position?.name ?? '-',
+                        progress_status: this.labelStatus(participant.progress_status),
+                        pre_test_status: this.labelStatus(participant.pre_test_status),
+                        pre_test_score: participant.pre_test_score,
+                        material_status: this.labelStatus(participant.material_status),
+                        post_test_status: this.labelStatus(participant.post_test_status),
+                        post_test_score: participant.post_test_score,
+                        final_score: participant.final_score,
+                    };
+                    this.showDetailModal = true;
+                },
+                labelStatus(status) {
+                    const labels = {
+                        locked: 'Terkunci',
+                        not_started: 'Belum Mulai',
+                        in_progress: 'Berjalan',
+                        accessed: 'Diakses',
+                        completed: 'Selesai',
+                        waiting_grading: 'Menunggu Penilaian',
+                        passed: 'Lulus',
+                        failed: 'Tidak Lulus',
+                        retake: 'Remidial',
+                        none: 'Belum Dinilai',
+                        graded: 'Sudah Dinilai',
+                    };
+                    return labels[status] ?? status;
+                },
+                matchesFilter(participant) {
+                    if (this.search) {
+                        const name = (participant.employee?.name ?? '').toLowerCase();
+                        const username = (participant.employee?.user?.username ?? '').toLowerCase();
+                        const q = this.search.toLowerCase();
+                        if (!name.includes(q) && !username.includes(q)) return false;
+                    }
+                    if (this.filterDepartment && participant.employee?.department_id != this.filterDepartment) return false;
+                    if (this.filterPosition && participant.employee?.position_id != this.filterPosition) return false;
+                    if (this.filterProgress && participant.progress_status !== this.filterProgress) return false;
+                    return true;
                 },
             }));
         });
