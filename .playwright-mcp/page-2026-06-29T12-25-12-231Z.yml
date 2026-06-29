@@ -1,0 +1,180 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]:
+      - link "SI-PINTAR" [ref=e5] [cursor=pointer]:
+        - /url: http://localhost:8000/admin/dashboard
+        - img [ref=e6]
+        - generic [ref=e8]: SI-PINTAR
+      - link "SP" [ref=e9] [cursor=pointer]:
+        - /url: http://localhost:8000/admin/dashboard
+    - navigation [ref=e10]:
+      - link "Dashboard" [ref=e11] [cursor=pointer]:
+        - /url: http://localhost:8000/admin/dashboard
+        - img [ref=e12]
+        - generic [ref=e14]: Dashboard
+      - button "Master Data" [ref=e16]:
+        - img [ref=e17]
+        - generic [ref=e19]: Master Data
+        - img [ref=e20]
+      - link "Data Training" [ref=e22] [cursor=pointer]:
+        - /url: http://localhost:8000/admin/training
+        - img [ref=e23]
+        - generic [ref=e25]: Data Training
+      - link "Penilaian" [ref=e26] [cursor=pointer]:
+        - /url: http://localhost:8000/admin/penilaian
+        - img [ref=e27]
+        - generic [ref=e29]: Penilaian
+      - link "Monitoring" [ref=e30] [cursor=pointer]:
+        - /url: http://localhost:8000/admin/monitoring-progress
+        - img [ref=e31]
+        - generic [ref=e33]: Monitoring
+      - link "Laporan" [ref=e34] [cursor=pointer]:
+        - /url: http://localhost:8000/admin/laporan-training
+        - img [ref=e35]
+        - generic [ref=e37]: Laporan
+      - link "Profil" [ref=e39] [cursor=pointer]:
+        - /url: http://localhost:8000/admin/profil-password
+        - img [ref=e40]
+        - generic [ref=e42]: Profil
+  - generic [ref=e43]:
+    - banner [ref=e44]:
+      - generic [ref=e45]:
+        - button [ref=e46]:
+          - img [ref=e47]
+        - navigation [ref=e49]:
+          - generic [ref=e50]: Admin
+          - img [ref=e51]
+          - generic [ref=e53]: Karyawan
+      - generic [ref=e54]:
+        - button "AD Administrator" [ref=e55]:
+          - generic [ref=e56]: AD
+          - generic [ref=e57]: Administrator
+          - img [ref=e58]
+        - generic [ref=e60]:
+          - link "Profil & Password" [ref=e61] [cursor=pointer]:
+            - /url: http://localhost:8000/admin/profil-password
+          - button "Logout" [ref=e63]
+    - main [ref=e64]:
+      - generic [ref=e65]:
+        - generic [ref=e66]:
+          - generic [ref=e67]:
+            - heading "Karyawan" [level=1] [ref=e68]
+            - paragraph [ref=e69]: Kelola data dan akun login karyawan.
+          - link "Tambah Karyawan" [ref=e71] [cursor=pointer]:
+            - /url: http://localhost:8000/admin/master/karyawan/create
+        - generic [ref=e72]:
+          - generic [ref=e73]:
+            - textbox "Cari nama/username/kode" [ref=e76]
+            - combobox [ref=e79]:
+              - option "Semua departemen" [selected]
+              - option "Finance"
+              - option "HR"
+              - option "IT"
+              - option "Production"
+              - option "Sales"
+            - combobox [ref=e82]:
+              - option "Semua jabatan" [selected]
+              - option "Admin Training"
+              - option "Manager"
+              - option "Staff"
+              - option "Supervisor"
+            - combobox [ref=e85]:
+              - option "Semua status" [selected]
+              - option "Aktif"
+              - option "Nonaktif"
+            - button "Cari" [ref=e87]
+          - table [ref=e89]:
+            - rowgroup [ref=e90]:
+              - row "Nama Karyawan Username Departemen Jabatan Status Aksi" [ref=e91]:
+                - columnheader "Nama Karyawan" [ref=e92]
+                - columnheader "Username" [ref=e93]
+                - columnheader "Departemen" [ref=e94]
+                - columnheader "Jabatan" [ref=e95]
+                - columnheader "Status" [ref=e96]
+                - columnheader "Aksi" [ref=e97]
+            - rowgroup [ref=e98]:
+              - row "Karyawan 3 EMP-00003 karyawan3 Finance Manager Nonaktif Detail Edit Aktifkan Hapus" [ref=e99]:
+                - cell "Karyawan 3 EMP-00003" [ref=e100]:
+                  - generic [ref=e101]: Karyawan 3
+                  - generic [ref=e102]: EMP-00003
+                - cell "karyawan3" [ref=e103]
+                - cell "Finance" [ref=e104]
+                - cell "Manager" [ref=e105]
+                - cell "Nonaktif" [ref=e106]:
+                  - generic [ref=e107]: Nonaktif
+                - cell "Detail Edit Aktifkan Hapus" [ref=e108]:
+                  - generic [ref=e109]:
+                    - link "Detail" [ref=e110] [cursor=pointer]:
+                      - /url: http://localhost:8000/admin/master/karyawan/3
+                    - link "Edit" [ref=e111] [cursor=pointer]:
+                      - /url: http://localhost:8000/admin/master/karyawan/3/edit
+                    - button "Aktifkan" [ref=e113]
+                    - button "Hapus" [ref=e115]
+              - row "Karyawan 4 EMP-00004 karyawan4 IT Staff Aktif Detail Edit Nonaktifkan Hapus" [ref=e116]:
+                - cell "Karyawan 4 EMP-00004" [ref=e117]:
+                  - generic [ref=e118]: Karyawan 4
+                  - generic [ref=e119]: EMP-00004
+                - cell "karyawan4" [ref=e120]
+                - cell "IT" [ref=e121]
+                - cell "Staff" [ref=e122]
+                - cell "Aktif" [ref=e123]:
+                  - generic [ref=e124]: Aktif
+                - cell "Detail Edit Nonaktifkan Hapus" [ref=e125]:
+                  - generic [ref=e126]:
+                    - link "Detail" [ref=e127] [cursor=pointer]:
+                      - /url: http://localhost:8000/admin/master/karyawan/4
+                    - link "Edit" [ref=e128] [cursor=pointer]:
+                      - /url: http://localhost:8000/admin/master/karyawan/4/edit
+                    - button "Nonaktifkan" [ref=e130]
+                    - button "Hapus" [ref=e132]
+              - row "Karyawan 5 EMP-00005 karyawan5 Production Staff Aktif Detail Edit Nonaktifkan Hapus" [ref=e133]:
+                - cell "Karyawan 5 EMP-00005" [ref=e134]:
+                  - generic [ref=e135]: Karyawan 5
+                  - generic [ref=e136]: EMP-00005
+                - cell "karyawan5" [ref=e137]
+                - cell "Production" [ref=e138]
+                - cell "Staff" [ref=e139]
+                - cell "Aktif" [ref=e140]:
+                  - generic [ref=e141]: Aktif
+                - cell "Detail Edit Nonaktifkan Hapus" [ref=e142]:
+                  - generic [ref=e143]:
+                    - link "Detail" [ref=e144] [cursor=pointer]:
+                      - /url: http://localhost:8000/admin/master/karyawan/5
+                    - link "Edit" [ref=e145] [cursor=pointer]:
+                      - /url: http://localhost:8000/admin/master/karyawan/5/edit
+                    - button "Nonaktifkan" [ref=e147]
+                    - button "Hapus" [ref=e149]
+              - row "Karyawan 1 EMP-00001 karyawan1 Production Supervisor Aktif Detail Edit Nonaktifkan Hapus" [ref=e150]:
+                - cell "Karyawan 1 EMP-00001" [ref=e151]:
+                  - generic [ref=e152]: Karyawan 1
+                  - generic [ref=e153]: EMP-00001
+                - cell "karyawan1" [ref=e154]
+                - cell "Production" [ref=e155]
+                - cell "Supervisor" [ref=e156]
+                - cell "Aktif" [ref=e157]:
+                  - generic [ref=e158]: Aktif
+                - cell "Detail Edit Nonaktifkan Hapus" [ref=e159]:
+                  - generic [ref=e160]:
+                    - link "Detail" [ref=e161] [cursor=pointer]:
+                      - /url: http://localhost:8000/admin/master/karyawan/1
+                    - link "Edit" [ref=e162] [cursor=pointer]:
+                      - /url: http://localhost:8000/admin/master/karyawan/1/edit
+                    - button "Nonaktifkan" [ref=e164]
+                    - button "Hapus" [ref=e166]
+              - row "Karyawan 2 EMP-00002 karyawan2 HR Admin Training Aktif Detail Edit Nonaktifkan Hapus" [ref=e167]:
+                - cell "Karyawan 2 EMP-00002" [ref=e168]:
+                  - generic [ref=e169]: Karyawan 2
+                  - generic [ref=e170]: EMP-00002
+                - cell "karyawan2" [ref=e171]
+                - cell "HR" [ref=e172]
+                - cell "Admin Training" [ref=e173]
+                - cell "Aktif" [ref=e174]:
+                  - generic [ref=e175]: Aktif
+                - cell "Detail Edit Nonaktifkan Hapus" [ref=e176]:
+                  - generic [ref=e177]:
+                    - link "Detail" [ref=e178] [cursor=pointer]:
+                      - /url: http://localhost:8000/admin/master/karyawan/2
+                    - link "Edit" [ref=e179] [cursor=pointer]:
+                      - /url: http://localhost:8000/admin/master/karyawan/2/edit
+                    - button "Nonaktifkan" [ref=e181]
+                    - button "Hapus" [ref=e183]

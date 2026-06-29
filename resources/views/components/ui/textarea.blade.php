@@ -11,7 +11,7 @@
 
 @php
     $hasError = $error || $errors->has($name);
-    $base = 'block w-full rounded-md px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-60 disabled:cursor-not-allowed bg-white';
+    $base = 'block w-full rounded-md bg-white px-3 py-2 text-sm text-[#080808] placeholder:text-[#898989] caret-[#080808] transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-60 disabled:cursor-not-allowed';
     $normal = 'border border-[#D8D8D8] focus:border-[#080808] focus:ring-[#080808]';
     $error = 'border border-[#EE1D36] focus:border-[#EE1D36] focus:ring-[#EE1D36]';
     $classes = $hasError ? "$base $error" : "$base $normal";

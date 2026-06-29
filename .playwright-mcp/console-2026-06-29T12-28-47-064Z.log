@@ -1,0 +1,18 @@
+[    3929ms] [LOG] 🔍 Browser logger active (MCP server detected). Posting to: http://localhost:8000/_boost/browser-logs @ http://localhost:8000/admin/master/karyawan:43
+[    4571ms] TypeError: Cannot redefine property: $persist
+    at Object.defineProperty (<anonymous>)
+    at src_default (http://[::1]:5173/vendor/livewire/livewire/dist/livewire.esm.js:12440:10)
+    at http://[::1]:5173/vendor/livewire/livewire/dist/livewire.esm.js:2908:32
+    at Array.forEach (<anonymous>)
+    at Object.plugin (http://[::1]:5173/vendor/livewire/livewire/dist/livewire.esm.js:2908:17)
+    at Object.start (http://[::1]:5173/vendor/livewire/livewire/dist/livewire.esm.js:13595:28)
+    at HTMLDocument.<anonymous> (http://[::1]:5173/vendor/livewire/livewire/dist/livewire.esm.js:15518:15)
+[   33227ms] [LOG] 🔍 Browser logger active (MCP server detected). Posting to: http://localhost:8000/_boost/browser-logs @ http://localhost:8000/admin/master/karyawan:43
+[   33673ms] TypeError: Cannot redefine property: $persist
+    at Object.defineProperty (<anonymous>)
+    at src_default (http://[::1]:5173/vendor/livewire/livewire/dist/livewire.esm.js:12440:10)
+    at http://[::1]:5173/vendor/livewire/livewire/dist/livewire.esm.js:2908:32
+    at Array.forEach (<anonymous>)
+    at Object.plugin (http://[::1]:5173/vendor/livewire/livewire/dist/livewire.esm.js:2908:17)
+    at Object.start (http://[::1]:5173/vendor/livewire/livewire/dist/livewire.esm.js:13595:28)
+    at HTMLDocument.<anonymous> (http://[::1]:5173/vendor/livewire/livewire/dist/livewire.esm.js:15518:15)

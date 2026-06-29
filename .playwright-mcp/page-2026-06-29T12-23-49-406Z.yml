@@ -1,0 +1,79 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]:
+      - link "SI-PINTAR" [ref=e5] [cursor=pointer]:
+        - /url: http://localhost:8000/admin/dashboard
+        - img [ref=e6]
+        - generic [ref=e8]: SI-PINTAR
+      - link "SP" [ref=e9] [cursor=pointer]:
+        - /url: http://localhost:8000/admin/dashboard
+    - navigation [ref=e10]:
+      - link "Dashboard" [ref=e11] [cursor=pointer]:
+        - /url: http://localhost:8000/admin/dashboard
+        - img [ref=e12]
+        - generic [ref=e14]: Dashboard
+      - button "Master Data" [ref=e16]:
+        - img [ref=e17]
+        - generic [ref=e19]: Master Data
+        - img [ref=e20]
+      - link "Data Training" [ref=e22] [cursor=pointer]:
+        - /url: http://localhost:8000/admin/training
+        - img [ref=e23]
+        - generic [ref=e25]: Data Training
+      - link "Penilaian" [ref=e26] [cursor=pointer]:
+        - /url: http://localhost:8000/admin/penilaian
+        - img [ref=e27]
+        - generic [ref=e29]: Penilaian
+      - link "Monitoring" [ref=e30] [cursor=pointer]:
+        - /url: http://localhost:8000/admin/monitoring-progress
+        - img [ref=e31]
+        - generic [ref=e33]: Monitoring
+      - link "Laporan" [ref=e34] [cursor=pointer]:
+        - /url: http://localhost:8000/admin/laporan-training
+        - img [ref=e35]
+        - generic [ref=e37]: Laporan
+      - link "Profil" [ref=e39] [cursor=pointer]:
+        - /url: http://localhost:8000/admin/profil-password
+        - img [ref=e40]
+        - generic [ref=e42]: Profil
+  - generic [ref=e43]:
+    - banner [ref=e44]:
+      - generic [ref=e45]:
+        - button [ref=e46]:
+          - img [ref=e47]
+        - navigation [ref=e49]:
+          - generic [ref=e50]: Admin
+          - img [ref=e51]
+          - generic [ref=e53]: Dashboard
+      - generic [ref=e54]:
+        - button "AD Administrator" [ref=e55]:
+          - generic [ref=e56]: AD
+          - generic [ref=e57]: Administrator
+          - img [ref=e58]
+        - generic [ref=e60]:
+          - link "Profil & Password" [ref=e61] [cursor=pointer]:
+            - /url: http://localhost:8000/admin/profil-password
+          - button "Logout" [ref=e63]
+    - main [ref=e64]:
+      - generic [ref=e65]:
+        - generic [ref=e67]:
+          - heading "Dashboard" [level=1] [ref=e68]
+          - paragraph [ref=e69]: Selamat datang di SI-PINTAR.
+        - generic [ref=e70]:
+          - link "Total Karyawan 5" [ref=e72] [cursor=pointer]:
+            - /url: http://localhost:8000/admin/master/karyawan
+            - paragraph [ref=e73]: Total Karyawan
+            - paragraph [ref=e74]: "5"
+          - link "Departemen 5" [ref=e76] [cursor=pointer]:
+            - /url: http://localhost:8000/admin/master/departemen
+            - paragraph [ref=e77]: Departemen
+            - paragraph [ref=e78]: "5"
+          - link "Jabatan 4" [ref=e80] [cursor=pointer]:
+            - /url: http://localhost:8000/admin/master/jabatan
+            - paragraph [ref=e81]: Jabatan
+            - paragraph [ref=e82]: "4"
+          - link "Admin 1" [ref=e84] [cursor=pointer]:
+            - /url: http://localhost:8000/admin/master/admin-user
+            - paragraph [ref=e85]: Admin
+            - paragraph [ref=e86]: "1"
+        - paragraph [ref=e89]: Statistik dashboard akan ditampilkan setelah data tersedia.

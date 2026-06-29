@@ -18,6 +18,8 @@ class Training extends Model
         'start_date',
         'end_date',
         'status',
+        'passing_grade',
+        'max_attempts',
         'created_by',
     ];
 
@@ -27,6 +29,8 @@ class Training extends Model
             'start_date' => 'date',
             'end_date' => 'date',
             'status' => 'string',
+            'passing_grade' => 'decimal:2',
+            'max_attempts' => 'integer',
         ];
     }
 

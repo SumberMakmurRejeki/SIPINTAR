@@ -2,6 +2,7 @@
 
 <div class="relative" x-data="{ open: false }">
     <button
+        type="button"
         @click="open = !open"
         class="rounded-md p-1.5 text-[#5A5A5A] hover:bg-gray-100 hover:text-[#080808] transition-colors"
     >

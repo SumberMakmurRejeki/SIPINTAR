@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Actions\Fortify\ResetUserPassword;
 use App\Http\Responses\LoginResponse;
+use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -38,7 +39,7 @@ class FortifyServiceProvider extends ServiceProvider
     private function configureActions(): void
     {
         Fortify::authenticateUsing(function (Request $request) {
-            $user = \App\Models\User::where('username', $request->username)->first();
+            $user = User::where('username', $request->username)->first();
 
             if (! $user || $user->status !== 'active') {
                 return null;

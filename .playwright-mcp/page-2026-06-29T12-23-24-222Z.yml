@@ -1,0 +1,33 @@
+- generic [ref=e2]:
+  - generic [ref=e4]:
+    - heading "SI-PINTAR" [level=1] [ref=e5]
+    - paragraph [ref=e6]: Sistem Informasi Pelatihan dan Penilaian Karyawan
+    - generic [ref=e7]:
+      - generic [ref=e8]:
+        - img [ref=e9]
+        - generic [ref=e11]: Training terstruktur untuk seluruh karyawan
+      - generic [ref=e12]:
+        - img [ref=e13]
+        - generic [ref=e15]: Pre-test, materi, post-test, dan penilaian
+      - generic [ref=e16]:
+        - img [ref=e17]
+        - generic [ref=e19]: Monitoring progress dan laporan training
+  - generic [ref=e21]:
+    - heading "Masuk ke akun Anda" [level=2] [ref=e22]
+    - paragraph [ref=e23]: Masukkan username dan password Anda untuk melanjutkan.
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - generic [ref=e26]: Username
+        - textbox "Username" [active] [ref=e27]:
+          - /placeholder: Masukkan username
+      - generic [ref=e28]:
+        - generic [ref=e29]: Password
+        - textbox "Password" [ref=e30]:
+          - /placeholder: Masukkan password
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - checkbox "Ingat saya" [ref=e33]
+          - generic [ref=e34]: Ingat saya
+        - link "Lupa password?" [ref=e35] [cursor=pointer]:
+          - /url: http://localhost:8000/forgot-password
+      - button "Masuk" [ref=e36]
