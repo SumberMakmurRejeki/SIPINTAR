@@ -57,4 +57,9 @@ class TrainingParticipant extends Model
     {
         return $this->hasMany(TestAttempt::class);
     }
+
+    public function materialAccessLogs(): HasMany
+    {
+        return $this->hasMany(MaterialAccessLog::class);
+    }
 }

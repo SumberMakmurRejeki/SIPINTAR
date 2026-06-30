@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\GradingController;
+use App\Http\Controllers\Admin\MonitoringProgressController;
 use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Admin\PostTestController;
 use App\Http\Controllers\Admin\PostTestQuestionController;
@@ -93,7 +94,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('penilaian', [GradingController::class, 'index'])->name('grading.index');
         Route::get('penilaian/{attempt}', [GradingController::class, 'show'])->name('grading.show');
         Route::post('penilaian/{attempt}/grade', [GradingController::class, 'grade'])->name('grading.grade');
-        Route::view('monitoring-progress', 'pages::admin.monitoring-progress')->name('monitoring-progress');
+        Route::get('monitoring-progress', [MonitoringProgressController::class, 'index'])->name('monitoring-progress.index');
+        Route::get('monitoring-progress/{participant}', [MonitoringProgressController::class, 'show'])->name('monitoring-progress.show');
         Route::view('laporan-training', 'pages::admin.laporan-training')->name('laporan-training');
         Route::view('profil-password', 'pages::admin.profil-password')->name('profil-password');
     });
