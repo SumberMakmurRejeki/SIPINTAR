@@ -75,6 +75,7 @@ Route::middleware(['auth'])->group(function () {
         // Post-Test routes
         Route::post('training/{training}/post-test', [PostTestController::class, 'store'])->name('training.post-test.store');
         Route::put('training/{training}/post-test/{test}', [PostTestController::class, 'update'])->name('training.post-test.update');
+        Route::post('training/{training}/post-test/{test}/copy-from-pretest', [PostTestController::class, 'copyFromPretest'])->name('training.post-test.copy-from-pretest');
         Route::post('training/{training}/post-test/{test}/questions', [PostTestQuestionController::class, 'store'])->name('training.post-test.questions.store');
         Route::put('training/{training}/post-test/{test}/questions/{question}', [PostTestQuestionController::class, 'update'])->name('training.post-test.questions.update');
         Route::delete('training/{training}/post-test/{test}/questions/{question}', [PostTestQuestionController::class, 'destroy'])->name('training.post-test.questions.destroy');

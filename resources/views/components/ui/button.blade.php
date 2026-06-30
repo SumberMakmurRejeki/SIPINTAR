@@ -8,20 +8,20 @@
 ])
 
 @php
-    $base = 'inline-flex items-center justify-center font-medium transition-colors rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2';
+    $base = 'inline-flex items-center justify-center font-medium transition-colors rounded-[10px] focus:outline-none focus:ring-2 focus:ring-offset-2';
 
     $sizes = [
-        'sm' => 'text-xs px-3 py-1.5',
-        'md' => 'text-sm px-4 py-2',
-        'lg' => 'text-base px-6 py-2.5',
+        'sm' => 'text-[12px] px-3 py-1.5 gap-1.5',
+        'md' => 'text-[13px] px-4 py-2 gap-2',
+        'lg' => 'text-[14px] px-5 py-2.5 gap-2',
     ];
 
     $variants = [
-        'primary' => 'bg-[#080808] text-white hover:bg-[#080808]/90 focus:ring-[#080808]',
-        'secondary' => 'bg-white border border-[#D8D8D8] text-[#080808] hover:bg-gray-50 focus:ring-[#D8D8D8]',
-        'danger' => 'bg-[#EE1D36] text-white hover:bg-[#EE1D36]/90 focus:ring-[#EE1D36]',
-        'ghost' => 'text-[#080808] hover:bg-gray-100 focus:ring-[#D8D8D8]',
-        'outline' => 'bg-transparent border border-[#D8D8D8] text-[#080808] hover:bg-gray-50 focus:ring-[#D8D8D8]',
+        'primary' => 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-600 shadow-sm',
+        'secondary' => 'bg-white border border-[#e2e8f0] text-[#0f172a] hover:bg-gray-50 focus:ring-[#e2e8f0]',
+        'danger' => 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-600',
+        'ghost' => 'text-[#0f172a] hover:bg-gray-100 focus:ring-[#e2e8f0]',
+        'outline' => 'bg-transparent border border-[#e2e8f0] text-[#64748b] hover:bg-gray-50 hover:text-[#0f172a] focus:ring-[#e2e8f0]',
     ];
 
     $classes = trim("$base {$sizes[$size]} {$variants[$variant]}");

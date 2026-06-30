@@ -84,6 +84,8 @@ class TrainingController extends Controller
             ->orderBy('name')
             ->get();
 
+        $training->loadCount('trainingParticipants');
+
         return view('pages::admin.training.show', compact('training', 'allDepartments', 'allPositions', 'allActiveEmployees'));
     }
 

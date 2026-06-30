@@ -46,7 +46,7 @@
 
         {{-- Tabs --}}
         <x-ui.card class="p-0">
-            <div x-data="{ active: 'informasi' }" class="overflow-hidden">
+            <div x-data="{ active: '{{ request('tab', 'informasi') }}' }" class="overflow-hidden">
                 {{-- Tab headers --}}
                 <div class="flex border-b border-[#D8D8D8] overflow-x-auto">
                     <button type="button" @click="active = 'informasi'" :class="active === 'informasi' ? 'border-b-2 border-[#080808] text-[#080808] font-medium' : 'text-[#5A5A5A] hover:text-[#080808]'" class="px-4 py-3 text-sm transition-colors whitespace-nowrap">
@@ -677,6 +677,18 @@
                                 <div class="flex items-center justify-between mb-4">
                                     <h3 class="text-base font-semibold text-[#080808]">Daftar Soal</h3>
                                     <div class="flex gap-2">
+                                        @php
+                                            $preTest = $training->tests->firstWhere('type', 'pre_test');
+                                            $hasPreTestQuestions = $preTest && $preTest->questions->isNotEmpty();
+                                        @endphp
+                                        @if($hasPreTestQuestions)
+                                            <x-ui.button type="button" variant="secondary" size="sm" @click="showCopyModal = true">
+                                                <svg class="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" />
+                                                </svg>
+                                                Salin dari Pre-Test
+                                            </x-ui.button>
+                                        @endif
                                         <x-ui.button href="{{ route('admin.training.post-test.preview', [$training, $postTest]) }}" target="_blank" variant="ghost" size="sm">Preview</x-ui.button>
                                         <x-ui.button type="button" variant="primary" size="sm" @click="openAddQuestionModal()">
                                             <svg class="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -877,6 +889,34 @@
                                     @csrf
                                     @method('DELETE')
                                     <x-ui.button type="submit" variant="danger">Hapus Permanen</x-ui.button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Copy from Pre-Test Modal --}}
+                    <div x-show="showCopyModal" x-cloak @keydown.escape.window="showCopyModal = false" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+                        <div x-show="showCopyModal" x-transition:enter="transition-opacity ease-linear duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="showCopyModal = false" class="fixed inset-0 bg-black/50"></div>
+                        <div x-show="showCopyModal" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="relative w-full max-w-lg rounded-lg border border-[#D8D8D8] bg-white p-6 shadow-lg">
+                            <div class="flex items-start gap-4">
+                                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-50">
+                                    <svg class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" />
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="text-base font-semibold text-[#080808]">Salin dari Pre-Test?</h3>
+                                    <p class="mt-1 text-sm text-[#5A5A5A]">Semua soal dari Pre-Test akan disalin ke Post-Test. Soal yang sudah ada tidak akan terhapus.</p>
+                                </div>
+                                <button type="button" @click="showCopyModal = false" class="text-[#898989] hover:text-[#080808] transition-colors">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                                </button>
+                            </div>
+                            <div class="mt-6 flex items-center justify-end gap-3">
+                                <x-ui.button type="button" variant="secondary" @click="showCopyModal = false">Batal</x-ui.button>
+                                <form action="{{ route('admin.training.post-test.copy-from-pretest', [$training, $postTest]) }}" method="POST">
+                                    @csrf
+                                    <x-ui.button type="submit" variant="primary">Ya, Salin</x-ui.button>
                                 </form>
                             </div>
                         </div>
@@ -1365,17 +1405,18 @@
                 showDeleteQuestionModal: false,
                 deleteQuestionAction: '',
                 deleteQuestionMessage: '',
+                preTestId: @json($preTest?->id),
                 questions: @json($questions ?? collect()),
                 preTest: @json($preTest),
 
                 init() {
-                    @if($preTest)
+                    if (this.preTestId) {
                         this.settingFormMode = 'edit';
-                        this.settingFormAction = `/admin/training/{{ $training->id }}/pre-test/{{ $preTest->id }}`;
-                    @else
+                        this.settingFormAction = `/admin/training/{{ $training->id }}/pre-test/${this.preTestId}`;
+                    } else {
                         this.settingFormMode = 'create';
                         this.settingFormAction = `/admin/training/{{ $training->id }}/pre-test`;
-                    @endif
+                    }
                 },
 
                 openAddQuestionModal() {
@@ -1387,7 +1428,7 @@
                         { label: 'C', text: '', is_correct: false },
                         { label: 'D', text: '', is_correct: false },
                     ];
-                    this.questionFormAction = `/admin/training/{{ $training->id }}/pre-test/{{ $preTest->id }}/questions`;
+                    this.questionFormAction = this.preTestId ? `/admin/training/{{ $training->id }}/pre-test/${this.preTestId}/questions` : '';
                     this.$nextTick(() => {
                         const form = document.getElementById('pretest-question-form');
                         if (form) {
@@ -1405,7 +1446,7 @@
                     const question = this.questions[index];
                     this.questionFormMode = 'edit';
                     this.questionType = question.question_type;
-                    this.questionFormAction = `/admin/training/{{ $training->id }}/pre-test/{{ $preTest->id }}/questions/${question.id}`;
+                    this.questionFormAction = this.preTestId ? `/admin/training/{{ $training->id }}/pre-test/${this.preTestId}/questions/${question.id}` : '';
 
                     const existingOptions = (question.options || []).map(opt => ({
                         label: opt.option_label,
@@ -1466,7 +1507,7 @@
 
                 openDeleteQuestionModal(index) {
                     const question = this.questions[index];
-                    this.deleteQuestionAction = `/admin/training/{{ $training->id }}/pre-test/{{ $preTest->id }}/questions/${question.id}`;
+                    this.deleteQuestionAction = this.preTestId ? `/admin/training/{{ $training->id }}/pre-test/${this.preTestId}/questions/${question.id}` : '';
                     this.deleteQuestionMessage = `"${question.question_text.substring(0, 60)}..." akan dihapus permanen.`;
                     this.showDeleteQuestionModal = true;
                 },
@@ -1503,17 +1544,19 @@
                 showDeleteQuestionModal: false,
                 deleteQuestionAction: '',
                 deleteQuestionMessage: '',
+                showCopyModal: false,
+                postTestId: @json($postTest?->id),
                 questions: @json($postQuestions ?? collect()),
                 postTest: @json($postTest),
 
                 init() {
-                    @if($postTest)
+                    if (this.postTestId) {
                         this.settingFormMode = 'edit';
-                        this.settingFormAction = `/admin/training/{{ $training->id }}/post-test/{{ $postTest->id }}`;
-                    @else
+                        this.settingFormAction = `/admin/training/{{ $training->id }}/post-test/${this.postTestId}`;
+                    } else {
                         this.settingFormMode = 'create';
                         this.settingFormAction = `/admin/training/{{ $training->id }}/post-test`;
-                    @endif
+                    }
                 },
 
                 openAddQuestionModal() {
@@ -1525,7 +1568,7 @@
                         { label: 'C', text: '', is_correct: false },
                         { label: 'D', text: '', is_correct: false },
                     ];
-                    this.questionFormAction = `/admin/training/{{ $training->id }}/post-test/{{ $postTest->id }}/questions`;
+                    this.questionFormAction = this.postTestId ? `/admin/training/{{ $training->id }}/post-test/${this.postTestId}/questions` : '';
                     this.$nextTick(() => {
                         const form = document.getElementById('posttest-question-form');
                         if (form) {
@@ -1543,7 +1586,7 @@
                     const question = this.questions[index];
                     this.questionFormMode = 'edit';
                     this.questionType = question.question_type;
-                    this.questionFormAction = `/admin/training/{{ $training->id }}/post-test/{{ $postTest->id }}/questions/${question.id}`;
+                    this.questionFormAction = this.postTestId ? `/admin/training/{{ $training->id }}/post-test/${this.postTestId}/questions/${question.id}` : '';
 
                     const existingOptions = (question.options || []).map(opt => ({
                         label: opt.option_label,
@@ -1604,7 +1647,7 @@
 
                 openDeleteQuestionModal(index) {
                     const question = this.questions[index];
-                    this.deleteQuestionAction = `/admin/training/{{ $training->id }}/post-test/{{ $postTest->id }}/questions/${question.id}`;
+                    this.deleteQuestionAction = this.postTestId ? `/admin/training/{{ $training->id }}/post-test/${this.postTestId}/questions/${question.id}` : '';
                     this.deleteQuestionMessage = `"${question.question_text.substring(0, 60)}..." akan dihapus permanen.`;
                     this.showDeleteQuestionModal = true;
                 },

@@ -4,7 +4,6 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class StoreTrainingParticipantRequest extends FormRequest
 {
@@ -26,17 +25,20 @@ class StoreTrainingParticipantRequest extends FormRequest
         return [
             'assignment_type' => ['required', 'in:all,department,position,employees'],
             'department_id' => [
-                Rule::requiredIf($this->input('assignment_type') === 'department'),
+                'exclude_unless:assignment_type,department',
+                'required',
                 'integer',
                 'exists:departments,id',
             ],
             'position_id' => [
-                Rule::requiredIf($this->input('assignment_type') === 'position'),
+                'exclude_unless:assignment_type,position',
+                'required',
                 'integer',
                 'exists:positions,id',
             ],
             'employee_ids' => [
-                Rule::requiredIf($this->input('assignment_type') === 'employees'),
+                'exclude_unless:assignment_type,employees',
+                'required',
                 'array',
                 'min:1',
             ],

@@ -18,18 +18,18 @@ class PreTestController extends Controller
             'type' => 'pre_test',
         ]);
 
-        return redirect()->back()->with('success', 'Pre-test berhasil ditambahkan.');
+        return redirect(route('admin.training.show', $training).'?tab=pretest')->with('success', 'Pre-test berhasil ditambahkan.');
     }
 
     public function update(UpdatePreTestRequest $request, Training $training, Test $test): RedirectResponse
     {
         if (! $this->isPreTestForTraining($training, $test)) {
-            return redirect()->back()->with('error', 'Pre-test tidak ditemukan untuk training ini.');
+            return redirect(route('admin.training.show', $training).'?tab=pretest')->with('error', 'Pre-test tidak ditemukan untuk training ini.');
         }
 
         $test->update($request->validated());
 
-        return redirect()->back()->with('success', 'Pre-test berhasil diperbarui.');
+        return redirect(route('admin.training.show', $training).'?tab=pretest')->with('success', 'Pre-test berhasil diperbarui.');
     }
 
     private function isPreTestForTraining(Training $training, Test $test): bool

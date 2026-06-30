@@ -17,6 +17,6 @@
 </div>
 
 <div class="grid gap-4 sm:grid-cols-2">
-    <x-ui.input name="passing_grade" type="number" label="Passing Grade" value="{{ old('passing_grade', $training->passing_grade ?? '') }}" placeholder="0-100" helper="Nilai minimal kelulusan post-test (0-100)" />
-    <x-ui.input name="max_attempts" type="number" label="Batas Percobaan Post-Test" value="{{ old('max_attempts', $training->max_attempts ?? '') }}" placeholder="Minimal 1" helper="Jumlah maksimal mengulang post-test" />
+    <x-ui.input name="passing_grade" type="number" label="Passing Grade" value="{{ old('passing_grade', $training->passing_grade !== null ? $training->passing_grade : '') }}" placeholder="0-100" helper="Nilai minimal kelulusan post-test (0-100)" />
+    <x-ui.input name="max_attempts" type="number" label="Batas Percobaan Post-Test" value="{{ old('max_attempts', $training->max_attempts !== null ? $training->max_attempts : '') }}" placeholder="0 = tanpa batas" helper="Jumlah maksimal mengulang post-test (0 = tanpa batas)" />
 </div>

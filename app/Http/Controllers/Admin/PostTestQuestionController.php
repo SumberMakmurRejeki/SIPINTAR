@@ -16,7 +16,7 @@ class PostTestQuestionController extends Controller
     public function store(StorePostTestQuestionRequest $request, Training $training, Test $test): RedirectResponse
     {
         if (! $this->isPostTestForTraining($training, $test)) {
-            return redirect()->back()->with('error', 'Post-test tidak ditemukan untuk training ini.');
+            return redirect(route('admin.training.show', $training).'?tab=posttest')->with('error', 'Post-test tidak ditemukan untuk training ini.');
         }
 
         $data = $request->validated();
@@ -24,13 +24,13 @@ class PostTestQuestionController extends Controller
 
         $this->syncOptions($question, $data);
 
-        return redirect()->back()->with('success', 'Pertanyaan post-test berhasil ditambahkan.');
+        return redirect(route('admin.training.show', $training).'?tab=posttest')->with('success', 'Pertanyaan post-test berhasil ditambahkan.');
     }
 
     public function update(UpdatePostTestQuestionRequest $request, Training $training, Test $test, Question $question): RedirectResponse
     {
         if (! $this->isQuestionForPostTest($training, $test, $question)) {
-            return redirect()->back()->with('error', 'Pertanyaan post-test tidak ditemukan.');
+            return redirect(route('admin.training.show', $training).'?tab=posttest')->with('error', 'Pertanyaan post-test tidak ditemukan.');
         }
 
         $data = $request->validated();
@@ -38,25 +38,25 @@ class PostTestQuestionController extends Controller
 
         $this->syncOptions($question, $data);
 
-        return redirect()->back()->with('success', 'Pertanyaan post-test berhasil diperbarui.');
+        return redirect(route('admin.training.show', $training).'?tab=posttest')->with('success', 'Pertanyaan post-test berhasil diperbarui.');
     }
 
     public function destroy(Training $training, Test $test, Question $question): RedirectResponse
     {
         if (! $this->isQuestionForPostTest($training, $test, $question)) {
-            return redirect()->back()->with('error', 'Pertanyaan post-test tidak ditemukan.');
+            return redirect(route('admin.training.show', $training).'?tab=posttest')->with('error', 'Pertanyaan post-test tidak ditemukan.');
         }
 
         $question->options()->delete();
         $question->forceDelete();
 
-        return redirect()->back()->with('success', 'Pertanyaan post-test berhasil dihapus permanen.');
+        return redirect(route('admin.training.show', $training).'?tab=posttest')->with('success', 'Pertanyaan post-test berhasil dihapus permanen.');
     }
 
     public function toggleStatus(Training $training, Test $test, Question $question): RedirectResponse
     {
         if (! $this->isQuestionForPostTest($training, $test, $question)) {
-            return redirect()->back()->with('error', 'Pertanyaan post-test tidak ditemukan.');
+            return redirect(route('admin.training.show', $training).'?tab=posttest')->with('error', 'Pertanyaan post-test tidak ditemukan.');
         }
 
         $question->update([
@@ -65,7 +65,7 @@ class PostTestQuestionController extends Controller
 
         $action = $question->status === 'active' ? 'diaktifkan' : 'dinonaktifkan';
 
-        return redirect()->back()->with('success', "Pertanyaan post-test berhasil {$action}.");
+        return redirect(route('admin.training.show', $training).'?tab=posttest')->with('success', "Pertanyaan post-test berhasil {$action}.");
     }
 
     public function preview(Training $training, Test $test): View|RedirectResponse

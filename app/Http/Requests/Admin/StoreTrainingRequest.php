@@ -38,8 +38,8 @@ class StoreTrainingRequest extends FormRequest
             'start_date' => ['nullable', 'date'],
             'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
             'status' => ['nullable', 'string', 'in:draft,published,closed,archived'],
-            'passing_grade' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'max_attempts' => ['nullable', 'integer', 'min:1'],
+            'passing_grade' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'max_attempts' => ['nullable', 'integer', 'min:0'],
         ];
     }
 }

@@ -10,8 +10,8 @@
 
 @php
     $confirmClass = match($variant) {
-        'danger' => 'x-ui-btn-danger',
-        default => 'x-ui-btn-primary',
+        'danger' => 'bg-red-600 text-white hover:bg-red-700',
+        default => 'bg-blue-600 text-white hover:bg-blue-700',
     };
 @endphp
 
@@ -50,22 +50,22 @@
             x-transition:leave="transition ease-in duration-150"
             x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95"
-            class="relative w-full max-w-lg rounded-lg border border-[#D8D8D8] bg-white p-6 shadow-lg"
+            class="relative w-full max-w-md rounded-[14px] border border-[#e2e8f0] bg-white p-6 shadow-xl"
         >
             {{-- Header --}}
             <div class="flex items-start gap-4">
                 @if($icon)
-                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full {{ $variant === 'danger' ? 'bg-red-50' : 'bg-gray-50' }}">
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full {{ $variant === 'danger' ? 'bg-red-50' : 'bg-blue-50' }}">
                         {{ $icon }}
                     </div>
                 @endif
                 <div class="flex-1">
-                    <h3 class="text-base font-semibold text-[#080808]">{{ $title }}</h3>
+                    <h3 class="text-[15px] font-semibold text-[#0f172a]">{{ $title }}</h3>
                     @if($description)
-                        <p class="mt-1 text-sm text-[#5A5A5A]">{{ $description }}</p>
+                        <p class="mt-1 text-[13px] text-[#64748b]">{{ $description }}</p>
                     @endif
                 </div>
-                <button type="button" @click="open = false" class="text-[#898989] hover:text-[#080808] transition-colors">
+                <button type="button" @click="open = false" class="text-[#94a3b8] hover:text-[#0f172a] transition-colors">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -85,16 +85,13 @@
                     type="button"
                     @click="open = false"
                     {{ $attributes->merge(['@cancel']) }}
-                    class="rounded-md border border-[#D8D8D8] bg-white px-4 py-2 text-sm font-medium text-[#080808] hover:bg-gray-50 transition-colors"
+                    class="rounded-[10px] border border-[#e2e8f0] bg-white px-4 py-2 text-[13px] font-medium text-[#0f172a] hover:bg-gray-50 transition-colors"
                 >
                     {{ $cancelText }}
                 </button>
                 <button
                     type="button"
-                    {{ $attributes->merge(['@confirm', 'class' => match($variant) {
-                        'danger' => 'rounded-md bg-[#EE1D36] px-4 py-2 text-sm font-medium text-white hover:bg-[#EE1D36]/90 transition-colors',
-                        default => 'rounded-md bg-[#080808] px-4 py-2 text-sm font-medium text-white hover:bg-[#080808]/90 transition-colors',
-                    }]) }}
+                    {{ $attributes->merge(['@confirm', 'class' => "rounded-[10px] px-4 py-2 text-[13px] font-medium transition-colors $confirmClass"]) }}
                 >
                     {{ $confirmText }}
                 </button>

@@ -16,7 +16,7 @@ class PreTestQuestionController extends Controller
     public function store(StorePreTestQuestionRequest $request, Training $training, Test $test): RedirectResponse
     {
         if (! $this->isPreTestForTraining($training, $test)) {
-            return redirect()->back()->with('error', 'Pre-test tidak ditemukan untuk training ini.');
+            return redirect(route('admin.training.show', $training).'?tab=pretest')->with('error', 'Pre-test tidak ditemukan untuk training ini.');
         }
 
         $data = $request->validated();
@@ -24,13 +24,13 @@ class PreTestQuestionController extends Controller
 
         $this->syncOptions($question, $data);
 
-        return redirect()->back()->with('success', 'Pertanyaan pre-test berhasil ditambahkan.');
+        return redirect(route('admin.training.show', $training).'?tab=pretest')->with('success', 'Pertanyaan pre-test berhasil ditambahkan.');
     }
 
     public function update(UpdatePreTestQuestionRequest $request, Training $training, Test $test, Question $question): RedirectResponse
     {
         if (! $this->isQuestionForPreTest($training, $test, $question)) {
-            return redirect()->back()->with('error', 'Pertanyaan pre-test tidak ditemukan.');
+            return redirect(route('admin.training.show', $training).'?tab=pretest')->with('error', 'Pertanyaan pre-test tidak ditemukan.');
         }
 
         $data = $request->validated();
@@ -38,25 +38,25 @@ class PreTestQuestionController extends Controller
 
         $this->syncOptions($question, $data);
 
-        return redirect()->back()->with('success', 'Pertanyaan pre-test berhasil diperbarui.');
+        return redirect(route('admin.training.show', $training).'?tab=pretest')->with('success', 'Pertanyaan pre-test berhasil diperbarui.');
     }
 
     public function destroy(Training $training, Test $test, Question $question): RedirectResponse
     {
         if (! $this->isQuestionForPreTest($training, $test, $question)) {
-            return redirect()->back()->with('error', 'Pertanyaan pre-test tidak ditemukan.');
+            return redirect(route('admin.training.show', $training).'?tab=pretest')->with('error', 'Pertanyaan pre-test tidak ditemukan.');
         }
 
         $question->options()->delete();
         $question->forceDelete();
 
-        return redirect()->back()->with('success', 'Pertanyaan pre-test berhasil dihapus permanen.');
+        return redirect(route('admin.training.show', $training).'?tab=pretest')->with('success', 'Pertanyaan pre-test berhasil dihapus permanen.');
     }
 
     public function toggleStatus(Training $training, Test $test, Question $question): RedirectResponse
     {
         if (! $this->isQuestionForPreTest($training, $test, $question)) {
-            return redirect()->back()->with('error', 'Pertanyaan pre-test tidak ditemukan.');
+            return redirect(route('admin.training.show', $training).'?tab=pretest')->with('error', 'Pertanyaan pre-test tidak ditemukan.');
         }
 
         $question->update([
@@ -65,7 +65,7 @@ class PreTestQuestionController extends Controller
 
         $action = $question->status === 'active' ? 'diaktifkan' : 'dinonaktifkan';
 
-        return redirect()->back()->with('success', "Pertanyaan pre-test berhasil {$action}.");
+        return redirect(route('admin.training.show', $training).'?tab=pretest')->with('success', "Pertanyaan pre-test berhasil {$action}.");
     }
 
     public function preview(Training $training, Test $test): View|RedirectResponse

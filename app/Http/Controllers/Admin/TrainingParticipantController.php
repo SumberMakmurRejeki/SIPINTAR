@@ -26,7 +26,7 @@ class TrainingParticipantController extends Controller
         $skipped = count($existing);
 
         if (empty($newIds)) {
-            return redirect()->back()->with('error', 'Semua karyawan yang dipilih sudah menjadi peserta training ini.');
+            return redirect(route('admin.training.show', $training).'?tab=peserta')->with('error', 'Semua karyawan yang dipilih sudah menjadi peserta training ini.');
         }
 
         $inserts = array_map(function ($employeeId) use ($training) {
@@ -50,18 +50,18 @@ class TrainingParticipantController extends Controller
             $msg .= ' '.$skipped.' dilewati karena sudah menjadi peserta.';
         }
 
-        return redirect()->back()->with('success', $msg);
+        return redirect(route('admin.training.show', $training).'?tab=peserta')->with('success', $msg);
     }
 
     public function show(Training $training, TrainingParticipant $participant): RedirectResponse
     {
         if ($participant->training_id !== $training->id) {
-            return redirect()->back()->with('error', 'Peserta tidak ditemukan untuk training ini.');
+            return redirect(route('admin.training.show', $training).'?tab=peserta')->with('error', 'Peserta tidak ditemukan untuk training ini.');
         }
 
         $participant->load(['employee.user', 'employee.department', 'employee.position']);
 
-        return redirect()->back()->with([
+        return redirect(route('admin.training.show', $training).'?tab=peserta')->with([
             'participant_detail' => $participant,
             'participant_detail_modal' => true,
         ]);
@@ -70,7 +70,7 @@ class TrainingParticipantController extends Controller
     public function destroy(Training $training, TrainingParticipant $participant): RedirectResponse
     {
         if ($participant->training_id !== $training->id) {
-            return redirect()->back()->with('error', 'Peserta tidak ditemukan untuk training ini.');
+            return redirect(route('admin.training.show', $training).'?tab=peserta')->with('error', 'Peserta tidak ditemukan untuk training ini.');
         }
 
         if ($participant->pre_test_status !== 'not_started'
@@ -78,12 +78,12 @@ class TrainingParticipantController extends Controller
             || $participant->post_test_status !== 'locked'
             || $participant->pre_test_score !== null
             || $participant->post_test_score !== null) {
-            return redirect()->back()->with('error', 'Peserta sudah memiliki progress atau nilai. Biarkan sebagai histori training.');
+            return redirect(route('admin.training.show', $training).'?tab=peserta')->with('error', 'Peserta sudah memiliki progress atau nilai. Biarkan sebagai histori training.');
         }
 
         $participant->forceDelete();
 
-        return redirect()->back()->with('success', 'Peserta berhasil dihapus dari training.');
+        return redirect(route('admin.training.show', $training).'?tab=peserta')->with('success', 'Peserta berhasil dihapus dari training.');
     }
 
     private function resolveEmployeeIds(Request $request): array

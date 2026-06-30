@@ -1,5 +1,5 @@
 <thead>
-    <tr class="border-b border-[#D8D8D8] bg-gray-50">
+    <tr class="border-b border-[#e2e8f0] bg-[#f8fafc]">
         {{ $slot }}
     </tr>
 </thead>

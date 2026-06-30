@@ -10,8 +10,8 @@ use App\Models\TrainingMaterial;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TrainingMaterialController extends Controller
 {
@@ -36,7 +36,7 @@ class TrainingMaterialController extends Controller
 
         $training->materials()->create($data);
 
-        return redirect()->back()->with('success', 'Materi berhasil ditambahkan.');
+        return redirect(route('admin.training.show', $training).'?tab=materi')->with('success', 'Materi berhasil ditambahkan.');
     }
 
     public function update(UpdateTrainingMaterialRequest $request, Training $training, TrainingMaterial $material): RedirectResponse
@@ -59,7 +59,7 @@ class TrainingMaterialController extends Controller
 
         $material->update($data);
 
-        return redirect()->back()->with('success', 'Materi berhasil diperbarui.');
+        return redirect(route('admin.training.show', $training).'?tab=materi')->with('success', 'Materi berhasil diperbarui.');
     }
 
     public function toggleStatus(Request $request, Training $training, TrainingMaterial $material): RedirectResponse
@@ -70,7 +70,7 @@ class TrainingMaterialController extends Controller
 
         $action = $material->status === 'active' ? 'diaktifkan' : 'dinonaktifkan';
 
-        return redirect()->back()->with('success', "Materi berhasil {$action}.");
+        return redirect(route('admin.training.show', $training).'?tab=materi')->with('success', "Materi berhasil {$action}.");
     }
 
     public function destroy(Training $training, TrainingMaterial $material): RedirectResponse
@@ -81,17 +81,17 @@ class TrainingMaterialController extends Controller
 
         $material->forceDelete();
 
-        return redirect()->back()->with('success', 'Materi berhasil dihapus permanen.');
+        return redirect(route('admin.training.show', $training).'?tab=materi')->with('success', 'Materi berhasil dihapus permanen.');
     }
 
-    public function preview(Training $training, TrainingMaterial $material): View|RedirectResponse
+    public function preview(Training $training, TrainingMaterial $material): BinaryFileResponse|RedirectResponse
     {
         if ($material->type === 'link') {
             return redirect()->away($material->url);
         }
 
         if (! $material->file_path || ! Storage::disk('public')->exists($material->file_path)) {
-            return redirect()->back()->with('error', 'File tidak ditemukan.');
+            return redirect(route('admin.training.show', $training).'?tab=materi')->with('error', 'File tidak ditemukan.');
         }
 
         $path = Storage::disk('public')->path($material->file_path);
@@ -105,14 +105,14 @@ class TrainingMaterialController extends Controller
         ]);
     }
 
-    public function download(Training $training, TrainingMaterial $material): RedirectResponse|BinaryFileResponse
+    public function download(Training $training, TrainingMaterial $material): StreamedResponse|RedirectResponse
     {
         if ($material->type === 'link') {
             return redirect()->away($material->url);
         }
 
         if (! $material->file_path || ! Storage::disk('public')->exists($material->file_path)) {
-            return redirect()->back()->with('error', 'File tidak ditemukan.');
+            return redirect(route('admin.training.show', $training).'?tab=materi')->with('error', 'File tidak ditemukan.');
         }
 
         return Storage::disk('public')->download($material->file_path);
