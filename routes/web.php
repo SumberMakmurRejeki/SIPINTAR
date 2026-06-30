@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\PreTestQuestionController;
 use App\Http\Controllers\Admin\TrainingController;
 use App\Http\Controllers\Admin\TrainingMaterialController;
 use App\Http\Controllers\Admin\TrainingParticipantController;
+use App\Http\Controllers\Admin\TrainingReportController;
 use App\Http\Controllers\Employee\TestAttemptController;
 use App\Http\Controllers\Employee\TrainingController as EmployeeTrainingController;
 use App\Models\Department;
@@ -96,7 +97,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('penilaian/{attempt}/grade', [GradingController::class, 'grade'])->name('grading.grade');
         Route::get('monitoring-progress', [MonitoringProgressController::class, 'index'])->name('monitoring-progress.index');
         Route::get('monitoring-progress/{participant}', [MonitoringProgressController::class, 'show'])->name('monitoring-progress.show');
-        Route::view('laporan-training', 'pages::admin.laporan-training')->name('laporan-training');
+        Route::get('laporan-training', [TrainingReportController::class, 'index'])->name('laporan-training');
+        Route::get('laporan-training/export/pdf', [TrainingReportController::class, 'exportPdf'])->name('laporan-training.export.pdf');
+        Route::get('laporan-training/export/excel', [TrainingReportController::class, 'exportExcel'])->name('laporan-training.export.excel');
         Route::view('profil-password', 'pages::admin.profil-password')->name('profil-password');
     });
 
