@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\PreTestQuestionController;
 use App\Http\Controllers\Admin\TrainingController;
 use App\Http\Controllers\Admin\TrainingMaterialController;
 use App\Http\Controllers\Admin\TrainingParticipantController;
+use App\Http\Controllers\Employee\TestAttemptController;
 use App\Http\Controllers\Employee\TrainingController as EmployeeTrainingController;
 use App\Models\Department;
 use App\Models\Position;
@@ -105,6 +106,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('training-saya/{training}', [EmployeeTrainingController::class, 'show'])->name('training-saya.show');
         Route::post('training-saya/{training}/materials/{material}/access', [EmployeeTrainingController::class, 'accessMaterial'])->name('training-saya.materials.access');
         Route::get('training-saya/{training}/materials/{material}/download', [EmployeeTrainingController::class, 'downloadMaterial'])->name('training-saya.materials.download');
+
+        // Test routes
+        Route::get('training-saya/{training}/tests/{test}/start', [TestAttemptController::class, 'start'])->name('training-saya.tests.start');
+        Route::post('training-saya/{training}/tests/{test}/start', [TestAttemptController::class, 'begin'])->name('training-saya.tests.begin');
+        Route::get('training-saya/{training}/tests/{test}/attempts/{attempt}', [TestAttemptController::class, 'show'])->name('training-saya.tests.show');
+        Route::post('training-saya/{training}/tests/{test}/attempts/{attempt}/submit', [TestAttemptController::class, 'submit'])->name('training-saya.tests.submit');
     });
 });
 

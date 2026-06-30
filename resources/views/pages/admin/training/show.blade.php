@@ -689,7 +689,9 @@
                                                 Salin dari Pre-Test
                                             </x-ui.button>
                                         @endif
-                                        <x-ui.button href="{{ route('admin.training.post-test.preview', [$training, $postTest]) }}" target="_blank" variant="ghost" size="sm">Preview</x-ui.button>
+                                        @if($postTest)
+                                            <x-ui.button href="{{ route('admin.training.post-test.preview', [$training, $postTest]) }}" target="_blank" variant="ghost" size="sm">Preview</x-ui.button>
+                                        @endif
                                         <x-ui.button type="button" variant="primary" size="sm" @click="openAddQuestionModal()">
                                             <svg class="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -914,10 +916,12 @@
                             </div>
                             <div class="mt-6 flex items-center justify-end gap-3">
                                 <x-ui.button type="button" variant="secondary" @click="showCopyModal = false">Batal</x-ui.button>
-                                <form action="{{ route('admin.training.post-test.copy-from-pretest', [$training, $postTest]) }}" method="POST">
-                                    @csrf
-                                    <x-ui.button type="submit" variant="primary">Ya, Salin</x-ui.button>
-                                </form>
+                                @if($postTest)
+                                    <form action="{{ route('admin.training.post-test.copy-from-pretest', [$training, $postTest]) }}" method="POST">
+                                        @csrf
+                                        <x-ui.button type="submit" variant="primary">Ya, Salin</x-ui.button>
+                                    </form>
+                                @endif
                             </div>
                         </div>
                     </div>

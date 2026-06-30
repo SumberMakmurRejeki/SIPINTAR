@@ -42,7 +42,7 @@
         // Determine primary action
         $primaryAction = null;
         if ($participant->pre_test_status === 'not_started') {
-            $primaryAction = ['label' => 'Mulai Pre-Test', 'url' => '#', 'disabled' => true];
+            $primaryAction = ['label' => 'Mulai Pre-Test', 'url' => $training->preTest ? route('karyawan.training-saya.tests.start', [$training, $training->preTest]) : '#', 'disabled' => ! $training->preTest];
         } elseif ($participant->material_status === 'locked') {
             $primaryAction = ['label' => 'Materi Terkunci', 'url' => null, 'disabled' => true];
         } elseif (in_array($participant->material_status, ['not_started', 'accessed'])) {
@@ -50,7 +50,7 @@
         } elseif ($participant->post_test_status === 'locked') {
             $primaryAction = ['label' => 'Post-Test Terkunci', 'url' => null, 'disabled' => true];
         } elseif ($participant->post_test_status === 'not_started') {
-            $primaryAction = ['label' => 'Mulai Post-Test', 'url' => '#', 'disabled' => true];
+            $primaryAction = ['label' => 'Mulai Post-Test', 'url' => $training->postTest ? route('karyawan.training-saya.tests.start', [$training, $training->postTest]) : '#', 'disabled' => ! $training->postTest];
         } elseif ($participant->grading_status === 'waiting') {
             $primaryAction = ['label' => 'Menunggu Penilaian', 'url' => null, 'disabled' => true];
         } elseif ($participant->progress_status === 'passed') {
@@ -127,7 +127,11 @@
                     <p class="text-[13px] text-[#64748b] mt-0.5">{{ $training->preTest->title ?? 'Belum ada pre-test' }}</p>
                 </div>
                 @if($participant->pre_test_status === 'not_started')
-                    <x-ui.button size="sm" disabled>Mulai Pre-Test</x-ui.button>
+                    @if($training->preTest)
+                        <x-ui.button href="{{ route('karyawan.training-saya.tests.start', [$training, $training->preTest]) }}" size="sm">Mulai Pre-Test</x-ui.button>
+                    @else
+                        <x-ui.button size="sm" disabled>Mulai Pre-Test</x-ui.button>
+                    @endif
                 @elseif($participant->pre_test_status === 'completed')
                     <x-ui.badge variant="success">Selesai</x-ui.badge>
                 @else
@@ -210,7 +214,11 @@
                 @if($participant->post_test_status === 'locked')
                     <x-ui.badge variant="muted">Terkunci</x-ui.badge>
                 @elseif($participant->post_test_status === 'not_started')
-                    <x-ui.button size="sm" disabled>Mulai Post-Test</x-ui.button>
+                    @if($training->postTest)
+                        <x-ui.button href="{{ route('karyawan.training-saya.tests.start', [$training, $training->postTest]) }}" size="sm">Mulai Post-Test</x-ui.button>
+                    @else
+                        <x-ui.button size="sm" disabled>Mulai Post-Test</x-ui.button>
+                    @endif
                 @elseif($participant->post_test_status === 'completed')
                     <x-ui.badge variant="success">Selesai</x-ui.badge>
                 @else
