@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\TrainingParticipantController;
 use App\Http\Controllers\Admin\TrainingReportController;
 use App\Http\Controllers\Employee\TestAttemptController;
 use App\Http\Controllers\Employee\TrainingController as EmployeeTrainingController;
+use App\Http\Controllers\ProfilePasswordController;
 use App\Models\Department;
 use App\Models\Position;
 use App\Models\User;
@@ -100,14 +101,18 @@ Route::middleware(['auth'])->group(function () {
         Route::get('laporan-training', [TrainingReportController::class, 'index'])->name('laporan-training');
         Route::get('laporan-training/export/pdf', [TrainingReportController::class, 'exportPdf'])->name('laporan-training.export.pdf');
         Route::get('laporan-training/export/excel', [TrainingReportController::class, 'exportExcel'])->name('laporan-training.export.excel');
-        Route::view('profil-password', 'pages::admin.profil-password')->name('profil-password');
+        Route::get('profil-password', [ProfilePasswordController::class, 'index'])->name('profil-password');
+        Route::put('profil-password/profile', [ProfilePasswordController::class, 'updateProfile'])->name('profil-password.profile.update');
+        Route::put('profil-password/password', [ProfilePasswordController::class, 'updatePassword'])->name('profil-password.password.update');
     });
 
     // Employee routes
     Route::middleware(['role:employee'])->prefix('karyawan')->name('karyawan.')->group(function () {
         Route::view('dashboard', 'pages::employee.dashboard')->name('dashboard');
         Route::view('riwayat-training', 'pages::employee.riwayat-training')->name('riwayat-training');
-        Route::view('profil-password', 'pages::employee.profil-password')->name('profil-password');
+        Route::get('profil-password', [ProfilePasswordController::class, 'index'])->name('profil-password');
+        Route::put('profil-password/profile', [ProfilePasswordController::class, 'updateProfile'])->name('profil-password.profile.update');
+        Route::put('profil-password/password', [ProfilePasswordController::class, 'updatePassword'])->name('profil-password.password.update');
 
         // Training Saya
         Route::get('training-saya', [EmployeeTrainingController::class, 'index'])->name('training-saya.index');

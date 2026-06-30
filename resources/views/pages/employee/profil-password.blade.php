@@ -4,14 +4,65 @@
     <div class="space-y-6">
         <x-ui.page-header title="Profil & Password" subtitle="Kelola profil dan password akun Anda." />
 
-        <x-ui.card>
-            <div class="py-12 text-center">
-                <svg class="mx-auto h-12 w-12 text-[#898989]" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                </svg>
-                <h3 class="mt-4 text-sm font-semibold text-[#080808]">Pengaturan Profil & Password</h3>
-                <p class="mt-1 text-sm text-[#5A5A5A]">Fitur Profil & Password akan diimplementasikan di Session 5.</p>
+        {{-- Account Info --}}
+        <x-ui.form-section title="Informasi Akun">
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                    <p class="text-[13px] font-medium text-[#64748b]">Username</p>
+                    <p class="text-[14px] text-[#0f172a]">{{ $user->username }}</p>
+                </div>
+                <div>
+                    <p class="text-[13px] font-medium text-[#64748b]">Kode Karyawan</p>
+                    <p class="text-[14px] text-[#0f172a]">{{ $user->employee?->employee_code ?? '-' }}</p>
+                </div>
+                <div>
+                    <p class="text-[13px] font-medium text-[#64748b]">Departemen</p>
+                    <p class="text-[14px] text-[#0f172a]">{{ $user->employee?->department?->name ?? '-' }}</p>
+                </div>
+                <div>
+                    <p class="text-[13px] font-medium text-[#64748b]">Jabatan</p>
+                    <p class="text-[14px] text-[#0f172a]">{{ $user->employee?->position?->name ?? '-' }}</p>
+                </div>
+                <div>
+                    <p class="text-[13px] font-medium text-[#64748b]">Status</p>
+                    <p class="text-[14px] text-[#0f172a]">
+                        <x-ui.badge :variant="$user->status === 'active' ? 'success' : 'danger'">
+                            {{ $user->status === 'active' ? 'Aktif' : 'Nonaktif' }}
+                        </x-ui.badge>
+                    </p>
+                </div>
             </div>
-        </x-ui.card>
+        </x-ui.form-section>
+
+        {{-- Update Profile Form --}}
+        <x-ui.form-section title="Update Profil" description="Ubah nama dan email akun Anda.">
+            <form method="POST" action="{{ route('karyawan.profil-password.profile.update') }}" class="space-y-4">
+                @csrf
+                @method('PUT')
+
+                <x-ui.input name="name" label="Nama" :value="$user->name" required />
+                <x-ui.input name="email" label="Email" type="email" :value="$user->email" placeholder="opsional" />
+
+                <div class="flex justify-end">
+                    <x-ui.button type="submit" variant="primary">Simpan Profil</x-ui.button>
+                </div>
+            </form>
+        </x-ui.form-section>
+
+        {{-- Change Password Form --}}
+        <x-ui.form-section title="Ubah Password" description="Ganti password akun Anda.">
+            <form method="POST" action="{{ route('karyawan.profil-password.password.update') }}" class="space-y-4">
+                @csrf
+                @method('PUT')
+
+                <x-ui.input name="current_password" label="Password Lama" type="password" required />
+                <x-ui.input name="password" label="Password Baru" type="password" required helper="Minimal 8 karakter" />
+                <x-ui.input name="password_confirmation" label="Konfirmasi Password Baru" type="password" required />
+
+                <div class="flex justify-end">
+                    <x-ui.button type="submit" variant="primary">Ubah Password</x-ui.button>
+                </div>
+            </form>
+        </x-ui.form-section>
     </div>
 @endsection
