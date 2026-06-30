@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\PreTestQuestionController;
 use App\Http\Controllers\Admin\TrainingController;
 use App\Http\Controllers\Admin\TrainingMaterialController;
 use App\Http\Controllers\Admin\TrainingParticipantController;
+use App\Http\Controllers\Employee\TrainingController as EmployeeTrainingController;
 use App\Models\Department;
 use App\Models\Position;
 use App\Models\User;
@@ -96,9 +97,14 @@ Route::middleware(['auth'])->group(function () {
     // Employee routes
     Route::middleware(['role:employee'])->prefix('karyawan')->name('karyawan.')->group(function () {
         Route::view('dashboard', 'pages::employee.dashboard')->name('dashboard');
-        Route::view('training-saya', 'pages::employee.training-saya')->name('training-saya');
         Route::view('riwayat-training', 'pages::employee.riwayat-training')->name('riwayat-training');
         Route::view('profil-password', 'pages::employee.profil-password')->name('profil-password');
+
+        // Training Saya
+        Route::get('training-saya', [EmployeeTrainingController::class, 'index'])->name('training-saya.index');
+        Route::get('training-saya/{training}', [EmployeeTrainingController::class, 'show'])->name('training-saya.show');
+        Route::post('training-saya/{training}/materials/{material}/access', [EmployeeTrainingController::class, 'accessMaterial'])->name('training-saya.materials.access');
+        Route::get('training-saya/{training}/materials/{material}/download', [EmployeeTrainingController::class, 'downloadMaterial'])->name('training-saya.materials.download');
     });
 });
 
