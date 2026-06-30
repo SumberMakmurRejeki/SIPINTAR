@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\EmployeeController;
+use App\Http\Controllers\Admin\GradingController;
 use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Admin\PostTestController;
 use App\Http\Controllers\Admin\PostTestQuestionController;
@@ -89,7 +90,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('training/{training}/participants/{participant}', [TrainingParticipantController::class, 'show'])->name('training.participants.show');
         Route::delete('training/{training}/participants/{participant}', [TrainingParticipantController::class, 'destroy'])->name('training.participants.destroy');
 
-        Route::view('penilaian', 'pages::admin.penilaian')->name('penilaian');
+        Route::get('penilaian', [GradingController::class, 'index'])->name('grading.index');
+        Route::get('penilaian/{attempt}', [GradingController::class, 'show'])->name('grading.show');
+        Route::post('penilaian/{attempt}/grade', [GradingController::class, 'grade'])->name('grading.grade');
         Route::view('monitoring-progress', 'pages::admin.monitoring-progress')->name('monitoring-progress');
         Route::view('laporan-training', 'pages::admin.laporan-training')->name('laporan-training');
         Route::view('profil-password', 'pages::admin.profil-password')->name('profil-password');
